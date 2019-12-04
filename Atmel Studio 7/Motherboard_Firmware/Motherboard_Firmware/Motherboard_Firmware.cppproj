@@ -1,0 +1,1316 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="14.0">
+  <PropertyGroup>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectVersion>7.0</ProjectVersion>
+    <ToolchainName>com.Atmel.ARMGCC.CPP</ToolchainName>
+    <ProjectGuid>dce6c7e3-ee26-4d79-826b-08594b9ad897</ProjectGuid>
+    <avrdevice>ATSAM3X8E</avrdevice>
+    <avrdeviceseries>none</avrdeviceseries>
+    <OutputType>Executable</OutputType>
+    <Language>CPP</Language>
+    <OutputFileName>$(MSBuildProjectName)</OutputFileName>
+    <ArduinoProjectType>Sketch</ArduinoProjectType>
+    <OutputFileExtension>.elf</OutputFileExtension>
+    <OutputDirectory>$(MSBuildProjectDirectory)\$(Configuration)</OutputDirectory>
+    <Name>Motherboard_Firmware</Name>
+    <RootNamespace>Motherboard_Firmware</RootNamespace>
+    <ArduinoIdeDir>\\bob-server\SSD\3d printer firmware\large-printer\bob-printer\arduino-PR-beta1.9-BUILD-72</ArduinoIdeDir>
+    <ToolchainFlavour>Native</ToolchainFlavour>
+    <KeepTimersRunning>true</KeepTimersRunning>
+    <OverrideVtor>false</OverrideVtor>
+    <CacheFlash>true</CacheFlash>
+    <ProgFlashFromRam>true</ProgFlashFromRam>
+    <RamSnippetAddress>0x20000000</RamSnippetAddress>
+    <UncachedRange />
+    <preserveEEPROM>true</preserveEEPROM>
+    <OverrideVtorValue>exception_table</OverrideVtorValue>
+    <BootSegment>2</BootSegment>
+    <eraseonlaunchrule>1</eraseonlaunchrule>
+    <AssemblyName>Motherboard_Firmware</AssemblyName>
+    <ResetRule>0</ResetRule>
+    <EraseKey />
+    <AsfFrameworkConfig>
+      <framework-data xmlns="">
+        <options />
+        <configurations />
+        <files />
+        <documentation help="" />
+        <offline-documentation help="" />
+        <dependencies>
+          <content-extension eid="atmel.asf" uuidref="Atmel.ASF" version="3.40.0" />
+        </dependencies>
+      </framework-data>
+    </AsfFrameworkConfig>
+    <avrtool>com.atmel.avrdbg.tool.atmelice</avrtool>
+    <avrtoolserialnumber>J41800099052</avrtoolserialnumber>
+    <avrdeviceexpectedsignature>0x285E0A60</avrdeviceexpectedsignature>
+    <com_atmel_avrdbg_tool_atmelice>
+      <ToolOptions>
+        <InterfaceProperties>
+          <JtagDbgClock>7500000</JtagDbgClock>
+          <SwdClock>2000000</SwdClock>
+          <JtagEnableExtResetOnStartSession>false</JtagEnableExtResetOnStartSession>
+          <JtagInChain>false</JtagInChain>
+          <JtagDevicesBefore>0</JtagDevicesBefore>
+          <JtagDevicesAfter>0</JtagDevicesAfter>
+          <JtagInstrBitsBefore>0</JtagInstrBitsBefore>
+          <JtagInstrBitsAfter>0</JtagInstrBitsAfter>
+          <JtagSelectedDeviceIndexInChain>0</JtagSelectedDeviceIndexInChain>
+          <JtagDaisyChainDevices>
+          </JtagDaisyChainDevices>
+        </InterfaceProperties>
+        <InterfaceName>SWD</InterfaceName>
+      </ToolOptions>
+      <ToolType>com.atmel.avrdbg.tool.atmelice</ToolType>
+      <ToolNumber>J41800099052</ToolNumber>
+      <ToolName>Atmel-ICE</ToolName>
+    </com_atmel_avrdbg_tool_atmelice>
+    <avrtoolinterface>SWD</avrtoolinterface>
+    <avrtoolinterfaceclock>7500000</avrtoolinterfaceclock>
+    <com_atmel_avrdbg_tool_samice>
+      <ToolOptions>
+        <InterfaceProperties>
+          <JtagDbgClock>4000000</JtagDbgClock>
+          <JtagEnableExtResetOnStartSession>true</JtagEnableExtResetOnStartSession>
+          <JtagInChain>false</JtagInChain>
+          <JtagDevicesBefore>0</JtagDevicesBefore>
+          <JtagDevicesAfter>0</JtagDevicesAfter>
+          <JtagInstrBitsBefore>0</JtagInstrBitsBefore>
+          <JtagInstrBitsAfter>0</JtagInstrBitsAfter>
+          <JtagSelectedDeviceIndexInChain>0</JtagSelectedDeviceIndexInChain>
+          <JtagDaisyChainDevices>
+          </JtagDaisyChainDevices>
+          <SwdClock>4000000</SwdClock>
+        </InterfaceProperties>
+        <InterfaceName>SWD</InterfaceName>
+        <JlinkConfigFile>C:\Users\Anthony\Documents\GitHub\Filabot_Motherboard\Atmel Studio 7\Motherboard_Firmware\Motherboard_Firmware\jlink.config</JlinkConfigFile>
+      </ToolOptions>
+      <ToolType>com.atmel.avrdbg.tool.samice</ToolType>
+      <ToolNumber>801006528</ToolNumber>
+      <ToolName>J-Link</ToolName>
+    </com_atmel_avrdbg_tool_samice>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <ToolchainSettings>
+      <ArmGccCpp>
+  <armgcc.common.outputfiles.hex>True</armgcc.common.outputfiles.hex>
+  <armgcc.common.outputfiles.lss>True</armgcc.common.outputfiles.lss>
+  <armgcc.common.outputfiles.eep>True</armgcc.common.outputfiles.eep>
+  <armgcc.common.outputfiles.bin>True</armgcc.common.outputfiles.bin>
+  <armgcc.common.outputfiles.srec>True</armgcc.common.outputfiles.srec>
+  <armgcc.compiler.symbols.DefSymbols>
+    <ListValues>
+      <Value>NDEBUG</Value>
+      <Value>F_CPU=84000000L</Value>
+      <Value>ARDUINO=</Value>
+      <Value>ARDUINO_SAM_DUE</Value>
+      <Value>ARDUINO_ARCH_SAM</Value>
+      <Value>USB_VID=0x2341</Value>
+      <Value>USB_PID=0x003e</Value>
+      <Value>USB_PRODUCT="\"Arduino Due\""</Value>
+      <Value>USB_MANUFACTURER="\"Arduino LLC\""</Value>
+      <Value>USBCON</Value>
+    </ListValues>
+  </armgcc.compiler.symbols.DefSymbols>
+  <armgcc.compiler.directories.IncludePaths>
+    <ListValues>
+      <Value>%24(PackRepoDir)\arm\cmsis\5.0.1\CMSIS\Include\</Value>
+      <Value>%24(ProjectDir)\include</Value>
+      <Value>%24(ProjectDir)\include\core</Value>
+      <Value>%24(ProjectDir)\include\core\avr</Value>
+      <Value>%24(ProjectDir)\include\core\USB</Value>
+      <Value>%24(ProjectDir)\include\libraries\FreeRTOS_ARM</Value>
+      <Value>%24(ProjectDir)\include\libraries\ili9341_due</Value>
+      <Value>%24(ProjectDir)\include\libraries\SPI</Value>
+      <Value>%24(ProjectDir)\include\libraries\Vector</Value>
+      <Value>%24(ProjectDir)\include\libraries\FreeRTOS_ARM\utility</Value>
+      <Value>%24(ProjectDir)\include\libraries\ili9341_due\fonts</Value>
+      <Value>%24(ProjectDir)\include\libraries\Vector\Vector</Value>
+      <Value>../src/ASF/common/utils/interrupt</Value>
+      <Value>../src/ASF/common/utils</Value>
+      <Value>../src/ASF/sam/utils/cmsis/sam3x/source/templates/gcc</Value>
+      <Value>../src/ASF/sam/utils/cmsis/sam3x/source/templates</Value>
+      <Value>..\include\libraries\FreeRTOS_ARM\org_files</Value>
+      <Value>..\include\libraries\FreeRTOS_ARM\src</Value>
+      <Value>..\include\libraries\FreeRTOS_ARM\src\utility</Value>
+      <Value>..\include\libraries\SPI\src</Value>
+      <Value>..\include\libraries\Encoder</Value>
+      <Value>..\include\libraries\Encoder\utility</Value>
+      <Value>..\include\libraries\Adafruit_ADS1X15</Value>
+      <Value>..\include\libraries\Wire</Value>
+      <Value>..\include\libraries\Wire\src</Value>
+      <Value>..\include\libraries\DueFlashStorage\src</Value>
+    </ListValues>
+  </armgcc.compiler.directories.IncludePaths>
+  <armgcc.compiler.optimization.level>Optimize for size (-Os)</armgcc.compiler.optimization.level>
+  <armgcc.compiler.optimization.OtherFlags>-fno-threadsafe-statics -fno-exceptions</armgcc.compiler.optimization.OtherFlags>
+  <armgcc.compiler.optimization.PrepareFunctionsForGarbageCollection>True</armgcc.compiler.optimization.PrepareFunctionsForGarbageCollection>
+  <armgcc.compiler.optimization.PrepareDataForGarbageCollection>True</armgcc.compiler.optimization.PrepareDataForGarbageCollection>
+  <armgcc.compiler.optimization.EnableLongCalls>False</armgcc.compiler.optimization.EnableLongCalls>
+  <armgcc.compiler.optimization.DebugLevel>Maximum (-g3)</armgcc.compiler.optimization.DebugLevel>
+  <armgcc.compiler.warnings.InhibitAllWarnings>True</armgcc.compiler.warnings.InhibitAllWarnings>
+  <armgcc.compiler.miscellaneous.OtherFlags>-std=gnu11 --param max-inline-insns-single=500 -nostdlib</armgcc.compiler.miscellaneous.OtherFlags>
+  <armgcccpp.compiler.symbols.DefSymbols>
+    <ListValues>
+      <Value>NDEBUG</Value>
+      <Value>F_CPU=84000000L</Value>
+      <Value>ARDUINO=</Value>
+      <Value>ARDUINO_SAM_DUE</Value>
+      <Value>ARDUINO_ARCH_SAM</Value>
+      <Value>USB_VID=0x2341</Value>
+      <Value>USB_PID=0x003e</Value>
+      <Value>USB_PRODUCT="\"Arduino Due\""</Value>
+      <Value>USB_MANUFACTURER="\"Arduino LLC\""</Value>
+      <Value>USBCON</Value>
+    </ListValues>
+  </armgcccpp.compiler.symbols.DefSymbols>
+  <armgcccpp.compiler.directories.IncludePaths>
+    <ListValues>
+      <Value>%24(PackRepoDir)\arm\cmsis\5.0.1\CMSIS\Include\</Value>
+      <Value>%24(ProjectDir)\include</Value>
+      <Value>%24(ProjectDir)\include\core</Value>
+      <Value>%24(ProjectDir)\include\core\avr</Value>
+      <Value>%24(ProjectDir)\include\core\USB</Value>
+      <Value>%24(ProjectDir)\include\libraries\FreeRTOS_ARM</Value>
+      <Value>%24(ProjectDir)\include\libraries\ili9341_due</Value>
+      <Value>%24(ProjectDir)\include\libraries\SPI</Value>
+      <Value>%24(ProjectDir)\include\libraries\Vector</Value>
+      <Value>%24(ProjectDir)\include\libraries\FreeRTOS_ARM\utility</Value>
+      <Value>%24(ProjectDir)\include\libraries\ili9341_due\fonts</Value>
+      <Value>%24(ProjectDir)\include\libraries\Vector\Vector</Value>
+      <Value>../src/ASF/common/utils/interrupt</Value>
+      <Value>../src/ASF/common/utils</Value>
+      <Value>../src/ASF/sam/utils/cmsis/sam3x/source/templates/gcc</Value>
+      <Value>../src/ASF/sam/utils/cmsis/sam3x/source/templates</Value>
+      <Value>..\include\libraries\FreeRTOS_ARM\org_files</Value>
+      <Value>..\include\libraries\FreeRTOS_ARM\src</Value>
+      <Value>..\include\libraries\FreeRTOS_ARM\src\utility</Value>
+      <Value>..\include\libraries\SPI\src</Value>
+      <Value>..\include\libraries\Encoder</Value>
+      <Value>..\include\libraries\Encoder\utility</Value>
+      <Value>..\include\libraries\Adafruit_ADS1X15</Value>
+      <Value>..\include\libraries\Wire</Value>
+      <Value>..\include\libraries\Wire\src</Value>
+      <Value>..\include\libraries\DueFlashStorage\src</Value>
+    </ListValues>
+  </armgcccpp.compiler.directories.IncludePaths>
+  <armgcccpp.compiler.optimization.level>Optimize for size (-Os)</armgcccpp.compiler.optimization.level>
+  <armgcccpp.compiler.optimization.OtherFlags>-fno-threadsafe-statics -fno-exceptions</armgcccpp.compiler.optimization.OtherFlags>
+  <armgcccpp.compiler.optimization.PrepareFunctionsForGarbageCollection>True</armgcccpp.compiler.optimization.PrepareFunctionsForGarbageCollection>
+  <armgcccpp.compiler.optimization.PrepareDataForGarbageCollection>True</armgcccpp.compiler.optimization.PrepareDataForGarbageCollection>
+  <armgcccpp.compiler.optimization.EnableLongCalls>False</armgcccpp.compiler.optimization.EnableLongCalls>
+  <armgcccpp.compiler.optimization.DebugLevel>Maximum (-g3)</armgcccpp.compiler.optimization.DebugLevel>
+  <armgcccpp.compiler.warnings.InhibitAllWarnings>True</armgcccpp.compiler.warnings.InhibitAllWarnings>
+  <armgcccpp.compiler.miscellaneous.OtherFlags>-std=gnu++11 --param max-inline-insns-single=500 -nostdlib</armgcccpp.compiler.miscellaneous.OtherFlags>
+  <armgcccpp.linker.general.UseNewlibNano>True</armgcccpp.linker.general.UseNewlibNano>
+  <armgcccpp.linker.general.AdditionalSpecs>Use syscall stubs (--specs=nosys.specs)</armgcccpp.linker.general.AdditionalSpecs>
+  <armgcccpp.linker.libraries.Libraries>
+    <ListValues>
+      <Value>libm</Value>
+    </ListValues>
+  </armgcccpp.linker.libraries.Libraries>
+  <armgcccpp.linker.libraries.LibrarySearchPaths>
+    <ListValues>
+      <Value>..\linker_scripts\linker_scripts\gcc</Value>
+    </ListValues>
+  </armgcccpp.linker.libraries.LibrarySearchPaths>
+  <armgcccpp.linker.optimization.GarbageCollectUnusedSections>True</armgcccpp.linker.optimization.GarbageCollectUnusedSections>
+  <armgcccpp.linker.miscellaneous.LinkerFlags>-Tflash_without_bootloader.ld -Wl,--cref -Os -Wl,--check-sections -Wl,--unresolved-symbols=report-all -Wl,--warn-common -Wl,--warn-section-align</armgcccpp.linker.miscellaneous.LinkerFlags>
+  <armgcccpp.assembler.general.IncludePaths>
+    <ListValues>
+      <Value>%24(PackRepoDir)\arm\cmsis\5.0.1\CMSIS\Include\</Value>
+    </ListValues>
+  </armgcccpp.assembler.general.IncludePaths>
+  <armgcccpp.assembler.debugging.DebugLevel>Default (-Wa,-g)</armgcccpp.assembler.debugging.DebugLevel>
+  <armgcccpp.preprocessingassembler.general.IncludePaths>
+    <ListValues>
+      <Value>%24(PackRepoDir)\arm\cmsis\5.0.1\CMSIS\Include\</Value>
+    </ListValues>
+  </armgcccpp.preprocessingassembler.general.IncludePaths>
+</ArmGccCpp>
+    </ToolchainSettings>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <ToolchainSettings>
+      <ArmGccCpp>
+  <armgcc.common.outputfiles.hex>True</armgcc.common.outputfiles.hex>
+  <armgcc.common.outputfiles.lss>True</armgcc.common.outputfiles.lss>
+  <armgcc.common.outputfiles.eep>True</armgcc.common.outputfiles.eep>
+  <armgcc.common.outputfiles.bin>True</armgcc.common.outputfiles.bin>
+  <armgcc.common.outputfiles.srec>True</armgcc.common.outputfiles.srec>
+  <armgcc.compiler.symbols.DefSymbols>
+    <ListValues>
+      <Value>DEBUG</Value>
+      <Value>F_CPU=84000000L</Value>
+      <Value>ARDUINO=10805</Value>
+      <Value>ARDUINO_SAM_DUE</Value>
+      <Value>ARDUINO_ARCH_SAM</Value>
+      <Value>USB_VID=0x2341</Value>
+      <Value>USB_PID=0x003e</Value>
+      <Value>USB_PRODUCT="\"Arduino Due\""</Value>
+      <Value>USB_MANUFACTURER="\"Arduino LLC\""</Value>
+      <Value>USBCON</Value>
+      <Value>__SAM3X8E__</Value>
+    </ListValues>
+  </armgcc.compiler.symbols.DefSymbols>
+  <armgcc.compiler.directories.IncludePaths>
+    <ListValues>
+      <Value>%24(PackRepoDir)\arm\cmsis\5.0.1\CMSIS\Include\</Value>
+      <Value>..\include\libraries\FreeRTOS_ARM\org_files</Value>
+      <Value>..\include\libraries\FreeRTOS_ARM\src</Value>
+      <Value>..\include\libraries\FreeRTOS_ARM\src\utility</Value>
+      <Value>..\include\libraries\SPI\src</Value>
+      <Value>../include/libraries/Vector</Value>
+      <Value>../include/libraries/Vector/Vector</Value>
+      <Value>../include/libraries/ili9341_due</Value>
+      <Value>../include/libraries/ili9341_due/fonts</Value>
+      <Value>../include/libraries/SPI</Value>
+      <Value>../include/libraries/SPI/src</Value>
+      <Value>../include/libraries/Vector</Value>
+      <Value>../include/libraries/Vector/Vector</Value>
+      <Value>../include/avr</Value>
+      <Value>../include/include</Value>
+      <Value>../include</Value>
+      <Value>../include/sam3xa</Value>
+      <Value>../include/sam3xa/include</Value>
+      <Value>../include/sam3xa/include/component</Value>
+      <Value>../include/sam3xa/include/instance</Value>
+      <Value>../include/sam3xa/include/pio</Value>
+      <Value>../include/USB</Value>
+      <Value>../src/libraries/FreeRTOS_ARM/src</Value>
+      <Value>../src/libraries/FreeRTOS_ARM/src/utility</Value>
+      <Value>../src/libraries/SPI/src</Value>
+      <Value>../src/USB</Value>
+      <Value>../src/avr</Value>
+      <Value>../linker_scripts/linker_scripts/gcc</Value>
+      <Value>..\include\libraries\Encoder</Value>
+      <Value>..\include\libraries\Encoder\utility</Value>
+      <Value>..\include\libraries\Adafruit_ADS1X15</Value>
+      <Value>..\include\libraries\Wire</Value>
+      <Value>..\include\libraries\Wire\src</Value>
+      <Value>..\include\libraries\DueFlashStorage\src</Value>
+    </ListValues>
+  </armgcc.compiler.directories.IncludePaths>
+  <armgcc.compiler.optimization.level>Optimize most (-O3)</armgcc.compiler.optimization.level>
+  <armgcc.compiler.optimization.OtherFlags>-fno-threadsafe-statics -fno-exceptions</armgcc.compiler.optimization.OtherFlags>
+  <armgcc.compiler.optimization.PrepareFunctionsForGarbageCollection>True</armgcc.compiler.optimization.PrepareFunctionsForGarbageCollection>
+  <armgcc.compiler.optimization.PrepareDataForGarbageCollection>True</armgcc.compiler.optimization.PrepareDataForGarbageCollection>
+  <armgcc.compiler.optimization.EnableLongCalls>False</armgcc.compiler.optimization.EnableLongCalls>
+  <armgcc.compiler.optimization.DebugLevel>Maximum (-g3)</armgcc.compiler.optimization.DebugLevel>
+  <armgcc.compiler.warnings.InhibitAllWarnings>True</armgcc.compiler.warnings.InhibitAllWarnings>
+  <armgcc.compiler.miscellaneous.OtherFlags>-std=gnu11 --param max-inline-insns-single=500 -nostdlib</armgcc.compiler.miscellaneous.OtherFlags>
+  <armgcccpp.compiler.symbols.DefSymbols>
+    <ListValues>
+      <Value>DEBUG</Value>
+      <Value>F_CPU=84000000L</Value>
+      <Value>ARDUINO=10805</Value>
+      <Value>ARDUINO_SAM_DUE</Value>
+      <Value>ARDUINO_ARCH_SAM</Value>
+      <Value>USB_VID=0x2341</Value>
+      <Value>USB_PID=0x003e</Value>
+      <Value>USB_PRODUCT="\"Arduino Due\""</Value>
+      <Value>USB_MANUFACTURER="\"Arduino LLC\""</Value>
+      <Value>USBCON</Value>
+      <Value>__SAM3X8E__</Value>
+    </ListValues>
+  </armgcccpp.compiler.symbols.DefSymbols>
+  <armgcccpp.compiler.directories.IncludePaths>
+    <ListValues>
+      <Value>%24(PackRepoDir)\arm\cmsis\5.0.1\CMSIS\Include\</Value>
+      <Value>..\include\libraries\FreeRTOS_ARM\org_files</Value>
+      <Value>..\include\libraries\FreeRTOS_ARM\src</Value>
+      <Value>..\include\libraries\FreeRTOS_ARM\src\utility</Value>
+      <Value>..\include\libraries\SPI\src</Value>
+      <Value>../include/libraries/Vector</Value>
+      <Value>../include/libraries/Vector/Vector</Value>
+      <Value>../include/libraries/ili9341_due</Value>
+      <Value>../include/libraries/ili9341_due/fonts</Value>
+      <Value>../include/libraries/SPI</Value>
+      <Value>../include/libraries/SPI/src</Value>
+      <Value>../include/libraries/Vector</Value>
+      <Value>../include/libraries/Vector/Vector</Value>
+      <Value>../include/avr</Value>
+      <Value>../include/include</Value>
+      <Value>../include</Value>
+      <Value>../include/sam3xa</Value>
+      <Value>../include/sam3xa/include</Value>
+      <Value>../include/sam3xa/include/component</Value>
+      <Value>../include/sam3xa/include/instance</Value>
+      <Value>../include/sam3xa/include/pio</Value>
+      <Value>../include/USB</Value>
+      <Value>../src/libraries/FreeRTOS_ARM/src</Value>
+      <Value>../src/libraries/FreeRTOS_ARM/src/utility</Value>
+      <Value>../src/libraries/SPI/src</Value>
+      <Value>../src/USB</Value>
+      <Value>../src/avr</Value>
+      <Value>../linker_scripts/linker_scripts/gcc</Value>
+      <Value>..\include\libraries\Encoder</Value>
+      <Value>..\include\libraries\Encoder\utility</Value>
+      <Value>..\include\libraries\Adafruit_ADS1X15</Value>
+      <Value>..\include\libraries\Wire</Value>
+      <Value>..\include\libraries\Wire\src</Value>
+      <Value>..\include\libraries\DueFlashStorage\src</Value>
+    </ListValues>
+  </armgcccpp.compiler.directories.IncludePaths>
+  <armgcccpp.compiler.optimization.OtherFlags>-fno-threadsafe-statics -fno-exceptions</armgcccpp.compiler.optimization.OtherFlags>
+  <armgcccpp.compiler.optimization.PrepareFunctionsForGarbageCollection>True</armgcccpp.compiler.optimization.PrepareFunctionsForGarbageCollection>
+  <armgcccpp.compiler.optimization.PrepareDataForGarbageCollection>True</armgcccpp.compiler.optimization.PrepareDataForGarbageCollection>
+  <armgcccpp.compiler.optimization.EnableLongCalls>False</armgcccpp.compiler.optimization.EnableLongCalls>
+  <armgcccpp.compiler.optimization.DebugLevel>Maximum (-g3)</armgcccpp.compiler.optimization.DebugLevel>
+  <armgcccpp.compiler.warnings.InhibitAllWarnings>True</armgcccpp.compiler.warnings.InhibitAllWarnings>
+  <armgcccpp.compiler.miscellaneous.OtherFlags>-std=gnu++11 --param max-inline-insns-single=500 -nostdlib</armgcccpp.compiler.miscellaneous.OtherFlags>
+  <armgcccpp.linker.general.AdditionalSpecs>Use syscall stubs (--specs=nosys.specs)</armgcccpp.linker.general.AdditionalSpecs>
+  <armgcccpp.linker.libraries.Libraries>
+    <ListValues>
+      <Value>libm</Value>
+    </ListValues>
+  </armgcccpp.linker.libraries.Libraries>
+  <armgcccpp.linker.libraries.LibrarySearchPaths>
+    <ListValues>
+      <Value>..\linker_scripts\linker_scripts\gcc</Value>
+    </ListValues>
+  </armgcccpp.linker.libraries.LibrarySearchPaths>
+  <armgcccpp.linker.optimization.GarbageCollectUnusedSections>True</armgcccpp.linker.optimization.GarbageCollectUnusedSections>
+  <armgcccpp.linker.memorysettings.ExternalRAM />
+  <armgcccpp.linker.miscellaneous.LinkerFlags>-Tsam3x8e_flash.ld -Wl,--cref -Os -Wl,--check-sections -Wl,--unresolved-symbols=report-all -Wl,--warn-common -Wl,--warn-section-align</armgcccpp.linker.miscellaneous.LinkerFlags>
+  <armgcccpp.assembler.general.IncludePaths>
+    <ListValues>
+      <Value>%24(PackRepoDir)\arm\cmsis\5.0.1\CMSIS\Include\</Value>
+    </ListValues>
+  </armgcccpp.assembler.general.IncludePaths>
+  <armgcccpp.assembler.debugging.DebugLevel>Default (-g)</armgcccpp.assembler.debugging.DebugLevel>
+  <armgcccpp.preprocessingassembler.general.IncludePaths>
+    <ListValues>
+      <Value>%24(PackRepoDir)\arm\cmsis\5.0.1\CMSIS\Include\</Value>
+    </ListValues>
+  </armgcccpp.preprocessingassembler.general.IncludePaths>
+  <armgcccpp.preprocessingassembler.debugging.DebugLevel>Default (-Wa,-g)</armgcccpp.preprocessingassembler.debugging.DebugLevel>
+</ArmGccCpp>
+    </ToolchainSettings>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="board.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="DataConversions.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="Error.cpp">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="Error.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="hardwareTypes.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\Arduino.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\avr\dtostrf.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\avr\interrupt.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\avr\pgmspace.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\binary.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\chip.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\Client.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\HardwareSerial.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\include\adc.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\include\can.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\include\dacc.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\include\efc.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\include\emac.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\include\gpbr.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\include\interrupt_sam_nvic.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\include\pio.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\include\pio_it.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\include\pmc.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\include\pwmc.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\include\rstc.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\include\rtc.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\include\rtt.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\include\spi.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\include\ssc.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\include\tc.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\include\timetick.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\include\trng.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\include\twi.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\include\udp.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\include\udphs.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\include\uotghs_device.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\include\uotghs_host.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\include\usart.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\include\USB_device.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\include\USB_host.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\include\wdt.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\IPAddress.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\itoa.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\libraries\Adafruit_ADS1X15\Adafruit_ADS1015.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\libraries\DueFlashStorage\src\DueFlashStorage.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\libraries\DueFlashStorage\src\flash_efc.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\libraries\Encoder\Encoder.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\libraries\Encoder\utility\direct_pin_read.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\libraries\Encoder\utility\interrupt_config.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\libraries\Encoder\utility\interrupt_pins.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\libraries\FreeRTOS_ARM\src\basic_io_arm.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\libraries\FreeRTOS_ARM\src\FreeRTOS_ARM.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\libraries\FreeRTOS_ARM\src\utility\croutine.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\libraries\FreeRTOS_ARM\src\utility\deprecated_definitions.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\libraries\FreeRTOS_ARM\src\utility\event_groups.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\libraries\FreeRTOS_ARM\src\utility\FreeRTOS.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\libraries\FreeRTOS_ARM\src\utility\FreeRTOSConfig.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\libraries\FreeRTOS_ARM\src\utility\list.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\libraries\FreeRTOS_ARM\src\utility\mpu_wrappers.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\libraries\FreeRTOS_ARM\src\utility\portable.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\libraries\FreeRTOS_ARM\src\utility\portmacro.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\libraries\FreeRTOS_ARM\src\utility\projdefs.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\libraries\FreeRTOS_ARM\src\utility\queue.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\libraries\FreeRTOS_ARM\src\utility\semphr.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\libraries\FreeRTOS_ARM\src\utility\StackMacros.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\libraries\FreeRTOS_ARM\src\utility\task.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\libraries\FreeRTOS_ARM\src\utility\timers.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\libraries\ili9341_due\fonts\allFonts.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\libraries\ili9341_due\fonts\Arial14.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\libraries\ili9341_due\fonts\Arial_bold_14.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\libraries\ili9341_due\fonts\Corsiva_12.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\libraries\ili9341_due\fonts\fixednums15x31.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\libraries\ili9341_due\fonts\fixednums7x15.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\libraries\ili9341_due\fonts\fixednums8x16.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\libraries\ili9341_due\fonts\helvNeueTh70.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\libraries\ili9341_due\fonts\jokerman_255.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\libraries\ili9341_due\fonts\roboto16.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\libraries\ili9341_due\fonts\roboto32.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\libraries\ili9341_due\fonts\roboto70nums.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\libraries\ili9341_due\fonts\SystemFont5x7.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\libraries\ili9341_due\fonts\Verdana_digits_24.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\libraries\ili9341_due\ILI9341_due.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\libraries\ili9341_due\ILI9341_due_config.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\libraries\ili9341_due\SystemFont5x7.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\libraries\SPI\src\SPI.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\libraries\Vector\Vector.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\libraries\Vector\Vector\VectorDefinitions.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\libraries\Wire\src\Wire.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\Print.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\Printable.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\Reset.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\RingBuffer.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\sam.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\sam3.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\sam3xa\include\component\component_adc.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\sam3xa\include\component\component_can.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\sam3xa\include\component\component_chipid.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\sam3xa\include\component\component_dacc.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\sam3xa\include\component\component_dmac.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\sam3xa\include\component\component_efc.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\sam3xa\include\component\component_emac.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\sam3xa\include\component\component_gpbr.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\sam3xa\include\component\component_hsmci.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\sam3xa\include\component\component_matrix.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\sam3xa\include\component\component_pdc.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\sam3xa\include\component\component_pio.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\sam3xa\include\component\component_pmc.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\sam3xa\include\component\component_pwm.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\sam3xa\include\component\component_rstc.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\sam3xa\include\component\component_rtc.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\sam3xa\include\component\component_rtt.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\sam3xa\include\component\component_sdramc.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\sam3xa\include\component\component_smc.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\sam3xa\include\component\component_spi.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\sam3xa\include\component\component_ssc.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\sam3xa\include\component\component_supc.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\sam3xa\include\component\component_tc.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\sam3xa\include\component\component_trng.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\sam3xa\include\component\component_twi.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\sam3xa\include\component\component_uart.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\sam3xa\include\component\component_uotghs.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\sam3xa\include\component\component_usart.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\sam3xa\include\component\component_wdt.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\sam3xa\include\instance\instance_adc.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\sam3xa\include\instance\instance_can0.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\sam3xa\include\instance\instance_can1.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\sam3xa\include\instance\instance_chipid.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\sam3xa\include\instance\instance_dacc.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\sam3xa\include\instance\instance_dmac.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\sam3xa\include\instance\instance_efc0.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\sam3xa\include\instance\instance_efc1.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\sam3xa\include\instance\instance_emac.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\sam3xa\include\instance\instance_gpbr.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\sam3xa\include\instance\instance_hsmci.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\sam3xa\include\instance\instance_matrix.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\sam3xa\include\instance\instance_pioa.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\sam3xa\include\instance\instance_piob.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\sam3xa\include\instance\instance_pioc.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\sam3xa\include\instance\instance_piod.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\sam3xa\include\instance\instance_pioe.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\sam3xa\include\instance\instance_piof.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\sam3xa\include\instance\instance_pmc.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\sam3xa\include\instance\instance_pwm.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\sam3xa\include\instance\instance_rstc.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\sam3xa\include\instance\instance_rtc.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\sam3xa\include\instance\instance_rtt.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\sam3xa\include\instance\instance_sdramc.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\sam3xa\include\instance\instance_smc.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\sam3xa\include\instance\instance_spi0.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\sam3xa\include\instance\instance_spi1.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\sam3xa\include\instance\instance_ssc.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\sam3xa\include\instance\instance_supc.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\sam3xa\include\instance\instance_tc0.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\sam3xa\include\instance\instance_tc1.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\sam3xa\include\instance\instance_tc2.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\sam3xa\include\instance\instance_trng.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\sam3xa\include\instance\instance_twi0.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\sam3xa\include\instance\instance_twi1.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\sam3xa\include\instance\instance_uart.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\sam3xa\include\instance\instance_uotghs.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\sam3xa\include\instance\instance_usart0.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\sam3xa\include\instance\instance_usart1.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\sam3xa\include\instance\instance_usart2.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\sam3xa\include\instance\instance_usart3.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\sam3xa\include\instance\instance_wdt.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\sam3xa\include\pio\pio_sam3x8e.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\sam3xa\include\sam3x8e.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\sam3xa\include\sam3xa.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\sam3xa\include\system_sam3xa.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\Server.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\Stream.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\syscalls.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\Tone.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\UARTClass.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\Udp.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\USARTClass.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\USB\PluggableUSB.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\USB\USBAPI.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\USB\USBCore.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\USB\USBDesc.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\variant.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\watchdog.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\WCharacter.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\WInterrupts.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\wiring.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\wiring_analog.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\wiring_constants.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\wiring_digital.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\wiring_private.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\wiring_pulse.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\wiring_shift.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\WMath.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\WString.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="NVM_Operations.cpp">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="NVM_Operations.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="Screen.cpp">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="Screen.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="SerialNative.cpp">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="SerialNative.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="SerialPortExpander.cpp">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="SerialPortExpander.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="SerialProcessing.cpp">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="SerialProcessing.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="Sketch.cpp">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="SpcProcessing.cpp">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="SpcProcessing.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\abi.cpp">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\avr\dtostrf.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\cortex_handlers.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\hooks.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\iar_calls_sam3.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\include\adc.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\include\adc12_sam3u.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\include\can.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\include\dacc.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\include\efc.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\include\emac.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\include\gpbr.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\include\interrupt_sam_nvic.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\include\pio.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\include\pmc.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\include\pwmc.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\include\rstc.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\include\rtc.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\include\rtt.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\include\spi.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\include\ssc.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\include\tc.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\include\timetick.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\include\trng.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\include\twi.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\include\udp.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\include\udphs.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\include\uotghs.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\include\uotghs_device.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\include\uotghs_host.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\include\usart.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\include\wdt.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\IPAddress.cpp">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\itoa.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\libraries\Adafruit_ADS1X15\Adafruit_ADS1015.cpp">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\libraries\DueFlashStorage\src\DueFlashStorage.cpp">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\libraries\DueFlashStorage\src\flash_efc.cpp">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\libraries\Encoder\Encoder.cpp">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\libraries\FreeRTOS_ARM\src\assertMsg.cpp">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\libraries\FreeRTOS_ARM\src\basic_io_arm.cpp">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\libraries\FreeRTOS_ARM\src\FreeRTOS_ARM.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\libraries\FreeRTOS_ARM\src\utility\croutine.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\libraries\FreeRTOS_ARM\src\utility\event_groups.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\libraries\FreeRTOS_ARM\src\utility\heap_3.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\libraries\FreeRTOS_ARM\src\utility\list.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\libraries\FreeRTOS_ARM\src\utility\port.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\libraries\FreeRTOS_ARM\src\utility\queue.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\libraries\FreeRTOS_ARM\src\utility\tasks.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\libraries\FreeRTOS_ARM\src\utility\timers.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\libraries\ili9341_due\ILI9341_due.cpp">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\libraries\SPI\src\SPI.cpp">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\libraries\Wire\src\Wire.cpp">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\main.cpp">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\new.cpp">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\Print.cpp">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\Reset.cpp">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\RingBuffer.cpp">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\sam3xa\include\system_sam3xa.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\sam3xa\startup_sam3xa.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\Stream.cpp">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\syscalls_sam3.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\UARTClass.cpp">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\USARTClass.cpp">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\USB\CDC.cpp">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\USB\PluggableUSB.cpp">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\USB\USBCore.cpp">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\variant.cpp">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\watchdog.cpp">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\WInterrupts.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\wiring.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\wiring_analog.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\wiring_digital.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\wiring_pulse.cpp">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\wiring_shift.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\WMath.cpp">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\WString.cpp">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="Structs.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Content Include="readme.html">
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="include\" />
+    <Folder Include="include\avr\" />
+    <Folder Include="include\include\" />
+    <Folder Include="include\libraries\" />
+    <Folder Include="include\libraries\Adafruit_ADS1X15\" />
+    <Folder Include="include\libraries\DueFlashStorage\" />
+    <Folder Include="include\libraries\DueFlashStorage\src\" />
+    <Folder Include="include\libraries\Encoder\" />
+    <Folder Include="include\libraries\Encoder\utility\" />
+    <Folder Include="include\libraries\FreeRTOS_ARM\" />
+    <Folder Include="include\libraries\FreeRTOS_ARM\src\" />
+    <Folder Include="include\libraries\FreeRTOS_ARM\src\utility\" />
+    <Folder Include="include\libraries\ili9341_due" />
+    <Folder Include="include\libraries\ili9341_due\fonts" />
+    <Folder Include="include\libraries\Vector" />
+    <Folder Include="include\libraries\SPI\" />
+    <Folder Include="include\libraries\SPI\src\" />
+    <Folder Include="include\libraries\Vector\Vector" />
+    <Folder Include="include\libraries\Wire\" />
+    <Folder Include="include\libraries\Wire\src\" />
+    <Folder Include="include\sam3xa\" />
+    <Folder Include="include\sam3xa\include\" />
+    <Folder Include="include\sam3xa\include\component\" />
+    <Folder Include="include\sam3xa\include\instance\" />
+    <Folder Include="include\sam3xa\include\pio\" />
+    <Folder Include="include\USB\" />
+    <Folder Include="linker_scripts\" />
+    <Folder Include="linker_scripts\linker_scripts\" />
+    <Folder Include="linker_scripts\linker_scripts\gcc\" />
+    <Folder Include="src\" />
+    <Folder Include="src\libraries\" />
+    <Folder Include="src\libraries\Adafruit_ADS1X15\" />
+    <Folder Include="src\libraries\DueFlashStorage\" />
+    <Folder Include="src\libraries\DueFlashStorage\src\" />
+    <Folder Include="src\libraries\Encoder\" />
+    <Folder Include="src\libraries\FreeRTOS_ARM\" />
+    <Folder Include="src\libraries\FreeRTOS_ARM\src\" />
+    <Folder Include="src\libraries\FreeRTOS_ARM\src\utility\" />
+    <Folder Include="src\libraries\ili9341_due" />
+    <Folder Include="src\libraries\SPI\" />
+    <Folder Include="src\libraries\SPI\src\" />
+    <Folder Include="src\include" />
+    <Folder Include="src\avr" />
+    <Folder Include="src\libraries\Wire\" />
+    <Folder Include="src\libraries\Wire\src\" />
+    <Folder Include="src\sam3xa" />
+    <Folder Include="src\sam3xa\include" />
+    <Folder Include="src\USB" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="linker_scripts\linker_scripts\gcc\flash.ld">
+      <SubType>compile</SubType>
+    </None>
+    <None Include="linker_scripts\linker_scripts\gcc\sam3x8e_flash.ld">
+      <SubType>compile</SubType>
+    </None>
+    <None Include="linker_scripts\linker_scripts\gcc\sam3x8e_sram.ld">
+      <SubType>compile</SubType>
+    </None>
+    <None Include="linker_scripts\linker_scripts\gcc\sam3xa_flash.ld">
+      <SubType>compile</SubType>
+    </None>
+    <None Include="linker_scripts\linker_scripts\gcc\sam3xa_sram.ld">
+      <SubType>compile</SubType>
+    </None>
+    <None Include="linker_scripts\linker_scripts\gcc\sram.ld">
+      <SubType>compile</SubType>
+    </None>
+  </ItemGroup>
+  <Import Project="$(AVRSTUDIO_EXE_PATH)\\Vs\\Compiler.targets" />
+</Project>
