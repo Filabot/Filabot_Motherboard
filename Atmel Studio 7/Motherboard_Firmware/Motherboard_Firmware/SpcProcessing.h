@@ -47,7 +47,7 @@ class SpcProcessing
 	Error *GetError(void);
 	void StartQuery(void);
 	void StopQuery(void);
-	bool QueryFailed(void);
+	bool QueryFailed(int32_t waitTime);
 	int GetLoopCounts(void);
 	
 	

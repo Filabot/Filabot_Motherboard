@@ -277,8 +277,7 @@ void SerialProcessing::CheckInteralCommands(SerialCommand *sCommand)
 {
 	if ( strcmp(sCommand->command, "SpecificGravity") == 0)
 	{
-		SPECIFICGRAVITY = atof(sCommand->value);
-		nvm_operations.SetSpecificGravity(SPECIFICGRAVITY);
+		nvm_operations.SetSpecificGravity(atof(sCommand->value));
 	}
 	if ( strcmp(sCommand->command, "GetFullUpdate") == 0)
 	{

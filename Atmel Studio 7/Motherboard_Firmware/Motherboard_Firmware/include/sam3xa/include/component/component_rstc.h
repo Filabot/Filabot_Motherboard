@@ -55,6 +55,11 @@ typedef struct {
 #define RSTC_SR_URSTS (0x1u << 0) /**< \brief (RSTC_SR) User Reset Status */
 #define RSTC_SR_RSTTYP_Pos 8
 #define RSTC_SR_RSTTYP_Msk (0x7u << RSTC_SR_RSTTYP_Pos) /**< \brief (RSTC_SR) Reset Type */
+#define   RSTC_SR_RSTTYP_GeneralReset (0x0u << 8) /**< \brief (RSTC_SR) First power-up Reset */
+#define   RSTC_SR_RSTTYP_BackupReset (0x1u << 8) /**< \brief (RSTC_SR) Return from Backup Mode */
+#define   RSTC_SR_RSTTYP_WatchdogReset (0x2u << 8) /**< \brief (RSTC_SR) Watchdog fault occurred */
+#define   RSTC_SR_RSTTYP_SoftwareReset (0x3u << 8) /**< \brief (RSTC_SR) Processor reset required by the software */
+#define   RSTC_SR_RSTTYP_UserReset (0x4u << 8) /**< \brief (RSTC_SR) NRST pin detected low */
 #define RSTC_SR_NRSTL (0x1u << 16) /**< \brief (RSTC_SR) NRST Pin Level */
 #define RSTC_SR_SRCMP (0x1u << 17) /**< \brief (RSTC_SR) Software Reset Command in Progress */
 /* -------- RSTC_MR : (RSTC Offset: 0x08) Mode Register -------- */

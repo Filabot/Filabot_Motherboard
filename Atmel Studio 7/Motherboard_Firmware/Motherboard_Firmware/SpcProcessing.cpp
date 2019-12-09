@@ -16,6 +16,7 @@
 
 
 SpcProcessing *SpcProcessing::firstinstance;
+SpcProcessing *thisInstance;
 
 void ISR_SPC();
 
@@ -25,6 +26,7 @@ SpcProcessing::SpcProcessing()
 	if(!firstinstance)
 	{
 		firstinstance = this;
+		thisInstance = this;
 	}
 
 	
@@ -56,7 +58,7 @@ void SpcProcessing::init(void)
 
 void ISR_SPC()
 {
-	delayMicroseconds(50);
+	//delayMicroseconds(50);
 	rawSPC_ISR[ISR_LOOP_COUNTER++] = digitalRead(INDICATOR_DAT) == 0 ? 48 : 49;
 	//digitalWrite(INDICATOR_REQ, HIGH);
 	if (ISR_LOOP_COUNTER >= 52) //there can only be 52 bits to the spc data
@@ -72,6 +74,14 @@ void ISR_SPC()
 		}
 		
 		SPC_ISR_LOCK = false; //unlock ISR to synchronize spc data loop
+
+		if (thisInstance)
+		{
+			thisInstance->RunSPCDataLoop();
+			thisInstance->StopQuery();
+
+		}
+		
 	}
 }
 
@@ -225,9 +235,9 @@ int SpcProcessing::GetLoopCounts(void)
 	return MAIN_LOOP_COUNTER;
 }
 
-bool SpcProcessing::QueryFailed(void)
+bool SpcProcessing::QueryFailed(int32_t waitTime)
 {
-	if (millis() >= previousQuery + 200) //100 milliseconds //if previous query didn't finish in time it is dead
+	if (millis() >= previousQuery + (waitTime)) //100 milliseconds //if previous query didn't finish in time it is dead
 	{
 		StopQuery();
 		//SerialNative.println("Query Error");
@@ -259,10 +269,6 @@ bool SpcProcessing::QueryFailed(void)
 bool SpcProcessing::HasError(void){
 
 	return HasErrors();
-	
-	//SerialUSB.println(eError.errorCode);
-
-	//return eError.errorCode > 0;
 }
 
 Error *SpcProcessing::GetError(void){
@@ -323,6 +329,7 @@ void SpcProcessing::StopQuery(void)
 	detachInterrupt(digitalPinToInterrupt(INDICATOR_CLK)); //kill interrupt
 	
 	digitalWrite(INDICATOR_REQ, HIGH);
+	
 }
 
 

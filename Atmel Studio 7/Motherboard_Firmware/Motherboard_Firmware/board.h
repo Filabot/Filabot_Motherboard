@@ -31,7 +31,6 @@ extern _SerialNative SerialNative;
 extern uint32_t SPOOLWEIGHT;
 extern float FILAMENTLENGTH;
 extern float FILAMENTDIAMETER;
-extern float SPECIFICGRAVITY;
 extern volatile bool HANDSHAKE;
 
 extern NVM_Operations nvm_operations;

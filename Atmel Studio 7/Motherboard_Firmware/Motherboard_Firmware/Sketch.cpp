@@ -31,6 +31,8 @@
 // ***** FreeRTOS  ***** //
 #define INCLUDE_vTaskDelay   1
 #define configUSE_PREEMPTION 1
+#define configKERNEL_INTERRUPT_PRIORITY     0xFF    
+#define configMAX_SYSCALL_INTERRUPT_PRIORITY    0x10        
 // Redefine AVR Flash string macro as nop for ARM
 #undef F
 #define F(str) str
@@ -86,7 +88,6 @@ _SerialNative SerialNative;
 uint32_t SPOOLWEIGHT = 0;
 float FILAMENTLENGTH = 0.0;
 float FILAMENTDIAMETER = 0.0;
-float SPECIFICGRAVITY = 0.0;
 volatile bool HANDSHAKE = false;
 
 
@@ -120,6 +121,46 @@ float spoolWeight = 0.0;
 
 void setup()
 {
+
+
+	uint32_t RST_status = (RSTC->RSTC_SR & RSTC_SR_RSTTYP_Msk) >> RSTC_SR_RSTTYP_Pos; // Get status from the last Reset
+	uint32_t CORE_status = (SUPC->SUPC_SR); // Get status from the last Core Reset
+
+	if (CORE_status == SUPC_SR_BODRSTS)
+	{
+		int i = 0;
+		i = i + 1;
+	}
+	
+	
+	if (RST_status == RSTC_SR_RSTTYP_GeneralReset)
+	{
+		int i = 0;
+		i = i + 1;
+	}
+	if (RST_status == RSTC_SR_RSTTYP_BackupReset)
+	{
+		int i = 0;
+		i = i + 1;
+	}
+	if (RST_status == RSTC_SR_RSTTYP_WatchdogReset)
+	{
+		int i = 0;
+		i = i + 1;
+	}
+	if (RST_status == RSTC_SR_RSTTYP_SoftwareReset)
+	{
+		int i = 0;
+		i = i + 1;
+	}
+	if (RST_status == RSTC_SR_RSTTYP_UserReset)
+	{
+		int i = 0;
+		i = i + 1;
+	}
+
+
+
 	SerialNative.begin(SERIAL_BAUD); //using native serial rather than programming port on DUE
 	SerialNative.setTimeout(1);
 
@@ -256,42 +297,35 @@ void TaskCheckSPC(void *pvParameters)  // This is a task.
 		{
 			TickType_t xLastWakeTime;
 			xLastWakeTime = xTaskGetTickCount();
+			int32_t waitTime = 25;
 
-			if (HANDSHAKE){
+			if (HANDSHAKE)
+			{
 
-				spcProcessing.StartQuery();//enable interrupts and start the bit gathering from spc
-				
-				while (!spcProcessing.ISR_READY()) //need to remove this while loop
+				if (spcProcessing.ISR_READY() && !spcProcessing.HasNewData)
 				{
-					if (spcProcessing.QueryFailed())
+					spcProcessing.StartQuery();//enable interrupts and start the bit gathering from spc
+				}
+				
+					if (spcProcessing.HasNewData)
 					{
-						break;
+						spcProcessing.HasNewData = false;
+						//SerialUSB.println(spcProcessing.GetDiameter()->charDiameterWithDecimal); //Serial print is broken using long values, use char instead
+						SerialCommand _serialCommand;
+						_serialCommand.hardwareType = hardwareType.indicator;
+						_serialCommand.command = "Diameter";
+						_serialCommand.value = spcProcessing.GetDiameter()->charDiameterWithDecimal;
+						char output[MAX_CMD_LENGTH] = {0};
+						
+						FILAMENTDIAMETER = spcProcessing.GetDiameter()->floatDiameterWithDecimal;
+						BuildSerialOutput(&_serialCommand, output);
+						SerialNative.println(output);
+						
 					}
-				}
-				
-				
-				spcProcessing.RunSPCDataLoop(); //once ISR is ready we can collect the data and build an output, needs to be done before query is stopped
-				spcProcessing.StopQuery(); // stop query, kill clk interrupt on SPC
-				
-				
-				if (spcProcessing.HasNewData)
-				{
-					//SerialUSB.println(spcProcessing.GetDiameter()->charDiameterWithDecimal); //Serial print is broken using long values, use char instead
-					SerialCommand _serialCommand;
-					_serialCommand.hardwareType = hardwareType.indicator;
-					_serialCommand.command = "Diameter";
-					_serialCommand.value = spcProcessing.GetDiameter()->charDiameterWithDecimal;
-					char output[MAX_CMD_LENGTH] = {0};
-					
-					FILAMENTDIAMETER = spcProcessing.GetDiameter()->floatDiameterWithDecimal;
-					BuildSerialOutput(&_serialCommand, output);
-					SerialNative.println(output);
-					
-				}
 			}
 			
 			xSemaphoreGive(xSemaphore);
-			vTaskDelayUntil( &xLastWakeTime, 50);
+			vTaskDelayUntil( &xLastWakeTime, waitTime);
 		}
 		
 	}
@@ -354,11 +388,12 @@ void TaskGetPullerData(void *pvParameters)  // This is a task.
 				if (!serialProcessing.FullUpdateRequested && command.hardwareType != NULL)
 				{
 					serialProcessing.SendDataToDevice(&command);
+					delay(15); //puller likes to take its sweet time responding, need at least 10ms to sync back...
 				}
 			}
 
 			xSemaphoreGive(xSemaphore);
-			vTaskDelayUntil( &xLastWakeTime, 250);
+			vTaskDelayUntil( &xLastWakeTime, 200);
 		}
 
 		
@@ -453,6 +488,7 @@ void TaskCheckEncoder(void *pvParameters)  // This is a task.
 				if (!serialProcessing.FullUpdateRequested && sCommand.hardwareType != NULL)
 				{
 					serialProcessing.SendDataToDevice(&sCommand);
+					delay(10);
 				}
 				previousEncoderValue = encoderValue;
 			}
@@ -597,17 +633,12 @@ void TaskCalculate(void *pvParameters)  // This is a task.
 
 			if (serialProcessing.FilamentCapture )
 			{
-				
-
-				
-
-
-
+				float specificGracity = atof(nvm_operations.GetSpecificGravity());
 				//SPOOLWEIGHT
 				if (FILAMENTLENGTH != previousLength)
 				{
-				if (spoolWeight < 0) {spoolWeight = 0.0;}
-					spoolWeight = spoolWeight + (float)((float)(HALF_PI / 2) * pow(FILAMENTDIAMETER, 2) * (FILAMENTLENGTH - previousLength)) * (float)SPECIFICGRAVITY;
+					if (spoolWeight < 0) {spoolWeight = 0.0;}
+					spoolWeight = spoolWeight + (float)((float)(HALF_PI / 2) * pow(FILAMENTDIAMETER, 2) * (FILAMENTLENGTH - previousLength)) * (float)specificGracity;
 					previousLength = FILAMENTLENGTH;
 				}
 				
