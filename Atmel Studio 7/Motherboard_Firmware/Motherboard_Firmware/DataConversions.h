@@ -14,7 +14,7 @@
 #include "SerialProcessing.h"
 
 #define INT_FORMAT "%d"
-#define FLOAT_FORMAT "%f"
+#define FLOAT_FORMAT "%.2f"
 #define DOUBLE_FORMAT "%lf"
 #define LL_FORMAT "%lld"
 #define OUTPUT_STRING_DSS "%d;%s;%s"

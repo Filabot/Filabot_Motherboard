@@ -31,8 +31,8 @@
 // ***** FreeRTOS  ***** //
 #define INCLUDE_vTaskDelay   1
 #define configUSE_PREEMPTION 1
-#define configKERNEL_INTERRUPT_PRIORITY     0xFF    
-#define configMAX_SYSCALL_INTERRUPT_PRIORITY    0x10        
+#define configKERNEL_INTERRUPT_PRIORITY     0xFF
+#define configMAX_SYSCALL_INTERRUPT_PRIORITY    0x10
 // Redefine AVR Flash string macro as nop for ARM
 #undef F
 #define F(str) str
@@ -117,6 +117,8 @@ bool previousCaptureState = false;
 
 float previousLength = 0;
 float spoolWeight = 0.0;
+int64_t feedRate = 0.0;
+int64_t previousFeedrateSampleTime = 0;
 
 
 void setup()
@@ -307,21 +309,21 @@ void TaskCheckSPC(void *pvParameters)  // This is a task.
 					spcProcessing.StartQuery();//enable interrupts and start the bit gathering from spc
 				}
 				
-					if (spcProcessing.HasNewData)
-					{
-						spcProcessing.HasNewData = false;
-						//SerialUSB.println(spcProcessing.GetDiameter()->charDiameterWithDecimal); //Serial print is broken using long values, use char instead
-						SerialCommand _serialCommand;
-						_serialCommand.hardwareType = hardwareType.indicator;
-						_serialCommand.command = "Diameter";
-						_serialCommand.value = spcProcessing.GetDiameter()->charDiameterWithDecimal;
-						char output[MAX_CMD_LENGTH] = {0};
-						
-						FILAMENTDIAMETER = spcProcessing.GetDiameter()->floatDiameterWithDecimal;
-						BuildSerialOutput(&_serialCommand, output);
-						SerialNative.println(output);
-						
-					}
+				if (spcProcessing.HasNewData)
+				{
+					spcProcessing.HasNewData = false;
+					//SerialUSB.println(spcProcessing.GetDiameter()->charDiameterWithDecimal); //Serial print is broken using long values, use char instead
+					SerialCommand _serialCommand;
+					_serialCommand.hardwareType = hardwareType.indicator;
+					_serialCommand.command = "Diameter";
+					_serialCommand.value = spcProcessing.GetDiameter()->charDiameterWithDecimal;
+					char output[MAX_CMD_LENGTH] = {0};
+					
+					FILAMENTDIAMETER = spcProcessing.GetDiameter()->floatDiameterWithDecimal;
+					BuildSerialOutput(&_serialCommand, output);
+					SerialNative.println(output);
+					
+				}
 			}
 			
 			xSemaphoreGive(xSemaphore);
@@ -376,6 +378,12 @@ void TaskGetPullerData(void *pvParameters)  // This is a task.
 					break;
 					case 2:
 					command.command = "FilamentLength";
+					command.hardwareType = hardwareType.puller;
+					command.value = NULL;
+					pullerDataCounter++;
+					break;
+					case 3:
+					command.command = "Feedrate";
 					command.hardwareType = hardwareType.puller;
 					command.value = NULL;
 					pullerDataCounter++;
@@ -634,40 +642,64 @@ void TaskCalculate(void *pvParameters)  // This is a task.
 			if (serialProcessing.FilamentCapture )
 			{
 				float specificGracity = atof(nvm_operations.GetSpecificGravity());
+				int64_t timeDifference = 0;
+				uint32_t filamentLengthDelta = 0;
+				int64_t currentTime = 0;
 				//SPOOLWEIGHT
 				if (FILAMENTLENGTH != previousLength)
 				{
 					if (spoolWeight < 0) {spoolWeight = 0.0;}
 					spoolWeight = spoolWeight + (float)((float)(HALF_PI / 2) * pow(FILAMENTDIAMETER, 2) * (FILAMENTLENGTH - previousLength)) * (float)specificGracity;
+					////feedRate = FILAMENTLENGTH /
+					//currentTime = millis();
+					//timeDifference = currentTime - previousFeedrateSampleTime;
+					//filamentLengthDelta = ((float)(FILAMENTLENGTH - previousLength) * 1000);
+					//feedRate = (filamentLengthDelta * timeDifference) / 1000;
 					previousLength = FILAMENTLENGTH;
-				}
-				
+					//previousFeedrateSampleTime = currentTime;
+					//
+					//
+//
+					SPOOLWEIGHT = uint32_t(spoolWeight);
+					char value[MAX_CMD_LENGTH] = {0};
+					CONVERT_NUMBER_TO_STRING(INT_FORMAT, SPOOLWEIGHT, value);
+					
+					SerialCommand command = {0};
+					command.command = "SpoolWeight";
+					command.hardwareType = hardwareType.internal;
+					command.value = value;
 
-				SPOOLWEIGHT = uint32_t(spoolWeight);
-				char value[MAX_CMD_LENGTH] = {0};
-				CONVERT_NUMBER_TO_STRING(INT_FORMAT, SPOOLWEIGHT, value);
-				
-				SerialCommand command = {0};
-				command.command = "SpoolWeight";
-				command.hardwareType = hardwareType.internal;
-				command.value = value;
-
-				if (!serialProcessing.FullUpdateRequested && command.hardwareType != NULL)
-				{
-					serialProcessing.SendDataToDevice(&command);
-					//command.hardwareType = hardwareType.puller;
-					//serialProcessing.SendDataToDevice(&command);
+					if (!serialProcessing.FullUpdateRequested && command.hardwareType != NULL)
+					{
+						serialProcessing.SendDataToDevice(&command);
+					}
+//
+					//value[MAX_CMD_LENGTH] = {0};
+					//CONVERT_NUMBER_TO_STRING(INT_FORMAT, feedRate, value);
+					//command.command = "Feedrate";
+					//command.hardwareType = hardwareType.internal;
+					//command.value = value;
+//
+					//
+					previousCaptureState = serialProcessing.FilamentCapture;
+//
+					//if (!serialProcessing.FullUpdateRequested && command.hardwareType != NULL)
+					//{
+						//serialProcessing.SendDataToDevice(&command);
+					//}
 				}
-				previousCaptureState = serialProcessing.FilamentCapture;
 				
 			}
 			else
 			{
 				spoolWeight = 0;
+				feedRate = 0;
+				previousLength = 0;
+				FILAMENTLENGTH = 0;
 			}
 			
 			xSemaphoreGive(xSemaphore);
-			vTaskDelayUntil( &xLastWakeTime, 250);
+			vTaskDelayUntil( &xLastWakeTime, 200);
 		}
 
 		
