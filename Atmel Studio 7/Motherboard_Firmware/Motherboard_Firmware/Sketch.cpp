@@ -124,47 +124,45 @@ int64_t previousFeedrateSampleTime = 0;
 void setup()
 {
 
+	char *restartReason = {0};
 
 	uint32_t RST_status = (RSTC->RSTC_SR & RSTC_SR_RSTTYP_Msk) >> RSTC_SR_RSTTYP_Pos; // Get status from the last Reset
 	uint32_t CORE_status = (SUPC->SUPC_SR); // Get status from the last Core Reset
 
 	if (CORE_status == SUPC_SR_BODRSTS)
-	{
-		int i = 0;
-		i = i + 1;
-	}
-	
+		restartReason = "Brownout Detector Reset Status";
+
+	if (CORE_status == SUPC_SR_SMRSTS)
+		restartReason = "Supply Monitor Reset Status";
 	
 	if (RST_status == RSTC_SR_RSTTYP_GeneralReset)
-	{
-		int i = 0;
-		i = i + 1;
-	}
+		restartReason = "First power-up Reset";
+	
 	if (RST_status == RSTC_SR_RSTTYP_BackupReset)
-	{
-		int i = 0;
-		i = i + 1;
-	}
+		restartReason = "Return from Backup Mode";
+
 	if (RST_status == RSTC_SR_RSTTYP_WatchdogReset)
-	{
-		int i = 0;
-		i = i + 1;
-	}
+		restartReason = "Watchdog fault occurred";
+
 	if (RST_status == RSTC_SR_RSTTYP_SoftwareReset)
-	{
-		int i = 0;
-		i = i + 1;
-	}
+		restartReason = "Processor reset required by the software";
+
 	if (RST_status == RSTC_SR_RSTTYP_UserReset)
-	{
-		int i = 0;
-		i = i + 1;
-	}
+		restartReason = "NRST pin detected low";
+	
 
 
 
 	SerialNative.begin(SERIAL_BAUD); //using native serial rather than programming port on DUE
 	SerialNative.setTimeout(1);
+
+	while (!SerialNative.dtr())
+	{
+		;;
+	}
+
+	SerialNative.print("Restart Reason: ");
+	SerialNative.println(restartReason);
 
 	ads.begin();
 	ads.setGain(GAIN_ONE);
@@ -650,16 +648,8 @@ void TaskCalculate(void *pvParameters)  // This is a task.
 				{
 					if (spoolWeight < 0) {spoolWeight = 0.0;}
 					spoolWeight = spoolWeight + (float)((float)(HALF_PI / 2) * pow(FILAMENTDIAMETER, 2) * (FILAMENTLENGTH - previousLength)) * (float)specificGracity;
-					////feedRate = FILAMENTLENGTH /
-					//currentTime = millis();
-					//timeDifference = currentTime - previousFeedrateSampleTime;
-					//filamentLengthDelta = ((float)(FILAMENTLENGTH - previousLength) * 1000);
-					//feedRate = (filamentLengthDelta * timeDifference) / 1000;
 					previousLength = FILAMENTLENGTH;
-					//previousFeedrateSampleTime = currentTime;
-					//
-					//
-//
+	
 					SPOOLWEIGHT = uint32_t(spoolWeight);
 					char value[MAX_CMD_LENGTH] = {0};
 					CONVERT_NUMBER_TO_STRING(INT_FORMAT, SPOOLWEIGHT, value);
@@ -673,20 +663,8 @@ void TaskCalculate(void *pvParameters)  // This is a task.
 					{
 						serialProcessing.SendDataToDevice(&command);
 					}
-//
-					//value[MAX_CMD_LENGTH] = {0};
-					//CONVERT_NUMBER_TO_STRING(INT_FORMAT, feedRate, value);
-					//command.command = "Feedrate";
-					//command.hardwareType = hardwareType.internal;
-					//command.value = value;
-//
-					//
+	
 					previousCaptureState = serialProcessing.FilamentCapture;
-//
-					//if (!serialProcessing.FullUpdateRequested && command.hardwareType != NULL)
-					//{
-						//serialProcessing.SendDataToDevice(&command);
-					//}
 				}
 				
 			}
