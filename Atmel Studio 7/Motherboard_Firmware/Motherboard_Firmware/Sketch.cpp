@@ -113,7 +113,7 @@ unsigned int fullUpdateCounter = 0;
 unsigned int traverseDataCounter = 0;
 unsigned int pullerDataCounter = 0;
 bool previousCaptureState = false;
-
+char *restartReason = {0};
 
 float previousLength = 0;
 float spoolWeight = 0.0;
@@ -124,7 +124,7 @@ int64_t previousFeedrateSampleTime = 0;
 void setup()
 {
 
-	char *restartReason = {0};
+	
 
 	uint32_t RST_status = (RSTC->RSTC_SR & RSTC_SR_RSTTYP_Msk) >> RSTC_SR_RSTTYP_Pos; // Get status from the last Reset
 	uint32_t CORE_status = (SUPC->SUPC_SR); // Get status from the last Core Reset
@@ -156,13 +156,7 @@ void setup()
 	SerialNative.begin(SERIAL_BAUD); //using native serial rather than programming port on DUE
 	SerialNative.setTimeout(1);
 
-	while (!SerialNative.dtr())
-	{
-		;;
-	}
-
-	SerialNative.print("Restart Reason: ");
-	SerialNative.println(restartReason);
+	
 
 	ads.begin();
 	ads.setGain(GAIN_ONE);
@@ -530,41 +524,58 @@ void TaskGetFullUpdate(void *pvParameters)  // This is a task.
 						command.command = "velocity";
 						command.hardwareType = hardwareType.puller;
 						serialProcessing.SendDataToDevice(&command);
+						delay(10);
 						fullUpdateCounter++;
 						break;
 
 						case 1:
+						command.command = "PullerRestartReason";
+						command.hardwareType = hardwareType.puller;
+						serialProcessing.SendDataToDevice(&command);
+						delay(10);
+						fullUpdateCounter++;
+						break;
+
+						case 2:
 						command.command = "InnerOffset";
 						command.hardwareType = hardwareType.traverse;
 						serialProcessing.SendDataToDevice(&command);
 						fullUpdateCounter++;
 						break;
 
-						case 2:
+						case 3:
 						command.command = "SpoolWidth";
 						command.hardwareType = hardwareType.traverse;
 						serialProcessing.SendDataToDevice(&command);
 						fullUpdateCounter++;
 						break;
 
-						case 3:
+						case 4:
 						command.command = "RunMode";
 						command.hardwareType = hardwareType.traverse;
 						serialProcessing.SendDataToDevice(&command);
 						fullUpdateCounter++;
 						break;
 
-						case 4:
+						case 5:
 						command.command = "StartPosition";
 						command.hardwareType = hardwareType.traverse;
 						serialProcessing.SendDataToDevice(&command);
 						fullUpdateCounter++;
 						break;
-
-						case 5:
+						
+						case 6:
 						command.command = "SpecificGravity";
 						command.hardwareType = hardwareType.internal;
 						command.value = nvm_operations.GetSpecificGravity();
+						serialProcessing.SendDataToDevice(&command);
+						fullUpdateCounter++;
+						break;
+
+						case 7:
+						command.command = "MotherboardRestartReason";
+						command.hardwareType = hardwareType.internal;
+						command.value = restartReason;
 						serialProcessing.SendDataToDevice(&command);
 						fullUpdateCounter++;
 						break;
@@ -647,7 +658,7 @@ void TaskCalculate(void *pvParameters)  // This is a task.
 				if (FILAMENTLENGTH != previousLength)
 				{
 					if (spoolWeight < 0) {spoolWeight = 0.0;}
-					spoolWeight = spoolWeight + (float)((float)(HALF_PI / 2) * pow(FILAMENTDIAMETER, 2) * (FILAMENTLENGTH - previousLength)) * (float)specificGracity;
+					spoolWeight = spoolWeight + (HALF_PI / 2.0) * pow(FILAMENTDIAMETER, 2) * (FILAMENTLENGTH - previousLength) * specificGracity;
 					previousLength = FILAMENTLENGTH;
 	
 					SPOOLWEIGHT = uint32_t(spoolWeight);
