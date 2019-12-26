@@ -29,6 +29,7 @@
 extern bool SIMULATIONACTIVE;
 extern _SerialNative SerialNative;
 extern uint32_t SPOOLWEIGHT;
+extern uint32_t SPOOLWEIGHTLIMIT;
 extern float FILAMENTLENGTH;
 extern float FILAMENTDIAMETER;
 extern volatile bool HANDSHAKE;

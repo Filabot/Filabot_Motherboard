@@ -279,6 +279,10 @@ void SerialProcessing::CheckInteralCommands(SerialCommand *sCommand)
 	{
 		nvm_operations.SetSpecificGravity(atof(sCommand->value));
 	}
+	if ( strcmp(sCommand->command, "SpoolWeightLimit") == 0)
+	{
+		nvm_operations.SetSpoolWeightLimit(atoi(sCommand->value));
+	}
 	if ( strcmp(sCommand->command, "GetFullUpdate") == 0)
 	{
 		FullUpdateRequested = true;

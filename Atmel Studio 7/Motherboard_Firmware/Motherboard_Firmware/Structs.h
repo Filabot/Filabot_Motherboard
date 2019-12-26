@@ -45,9 +45,7 @@ typedef struct
 	__attribute__((__aligned__(8))) float LowerLimit;
 	__attribute__((__aligned__(8))) float SpecificGravity;
 	__attribute__((__aligned__(8))) uint32_t SpoolWeight;
-	__attribute__((__aligned__(8))) float TraverseInnerOffset;
-	__attribute__((__aligned__(8))) uint32_t SpoolWidth;
-	__attribute__((__aligned__(8))) byte TravereStart;
+	__attribute__((__aligned__(8))) uint32_t SpoolWeightLimit;
 
 } _NVM_Storage;
 

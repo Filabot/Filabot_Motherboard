@@ -33,9 +33,6 @@ void NVM_Operations::init(){
 		NVM_Storage.NominalDiameter = 0.0;
 		NVM_Storage.SpecificGravity = 0.0;
 		NVM_Storage.SpoolWeight = 0;
-		NVM_Storage.SpoolWidth = 0;
-		NVM_Storage.TravereStart = 0;
-		NVM_Storage.TraverseInnerOffset = 0.0;
 		NVM_Storage.UpperLimit = 0.0;
 
 		byte byteStorage[sizeof(_NVM_Storage)]; // create byte array to store the struct
@@ -63,6 +60,27 @@ char *NVM_Operations::GetSpecificGravity(void)
 {
 	static char output[MAX_CMD_LENGTH] = {0};
 	CONVERT_NUMBER_TO_STRING("%0.2f", NVM_Storage.SpecificGravity, output);
+	
+
+	return output;
+}
+
+bool NVM_Operations::SetSpoolWeightLimit(uint32_t value)
+{
+	if (value != NVM_Storage.SpoolWeightLimit)
+	{
+		NVM_Storage.SpoolWeightLimit = value;
+		SaveStorage();
+		ReadStorage();
+	}
+
+	return true;
+}
+
+char *NVM_Operations::GetSpoolWeightLimit(void)
+{
+	static char output[MAX_CMD_LENGTH] = {0};
+	CONVERT_NUMBER_TO_STRING(INT_FORMAT, NVM_Storage.SpoolWeightLimit, output);
 	
 
 	return output;

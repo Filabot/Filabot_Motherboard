@@ -86,6 +86,7 @@ extern "C" char __data_load_end[];  // end of FLASH (used to check amount of Fla
 bool SIMULATIONACTIVE = false; //sets default value for simulation
 _SerialNative SerialNative;
 uint32_t SPOOLWEIGHT = 0;
+uint32_t SPOOLWEIGHTLIMIT = 0;
 float FILAMENTLENGTH = 0.0;
 float FILAMENTDIAMETER = 0.0;
 volatile bool HANDSHAKE = false;
@@ -130,25 +131,25 @@ void setup()
 	uint32_t CORE_status = (SUPC->SUPC_SR); // Get status from the last Core Reset
 
 	if (CORE_status == SUPC_SR_BODRSTS)
-		restartReason = "Brownout Detector Reset Status";
+	restartReason = "Brownout Detector Reset Status";
 
 	if (CORE_status == SUPC_SR_SMRSTS)
-		restartReason = "Supply Monitor Reset Status";
+	restartReason = "Supply Monitor Reset Status";
 	
 	if (RST_status == RSTC_SR_RSTTYP_GeneralReset)
-		restartReason = "First power-up Reset";
+	restartReason = "First power-up Reset";
 	
 	if (RST_status == RSTC_SR_RSTTYP_BackupReset)
-		restartReason = "Return from Backup Mode";
+	restartReason = "Return from Backup Mode";
 
 	if (RST_status == RSTC_SR_RSTTYP_WatchdogReset)
-		restartReason = "Watchdog fault occurred";
+	restartReason = "Watchdog fault occurred";
 
 	if (RST_status == RSTC_SR_RSTTYP_SoftwareReset)
-		restartReason = "Processor reset required by the software";
+	restartReason = "Processor reset required by the software";
 
 	if (RST_status == RSTC_SR_RSTTYP_UserReset)
-		restartReason = "NRST pin detected low";
+	restartReason = "NRST pin detected low";
 	
 
 
@@ -388,7 +389,7 @@ void TaskGetPullerData(void *pvParameters)  // This is a task.
 				if (!serialProcessing.FullUpdateRequested && command.hardwareType != NULL)
 				{
 					serialProcessing.SendDataToDevice(&command);
-					delay(15); //puller likes to take its sweet time responding, need at least 10ms to sync back...
+					delay(20); //puller likes to take its sweet time responding, need at least 10ms to sync back...
 				}
 			}
 
@@ -427,6 +428,19 @@ void TaskGetTraverseData(void *pvParameters)  // This is a task.
 					command.value = NULL;
 					traverseDataCounter++;
 					break;
+
+					case 2:
+					{
+						command.command = "FilamentDiameter";
+						command.hardwareType = hardwareType.traverse;
+						char value[MAX_CMD_LENGTH] = {0};
+						itoa((spcProcessing.GetDiameter()->floatDiameterWithDecimal * 1000), value, 10);
+						command.value = value;
+						//command.value = (spcProcessing.GetDiameter()->floatDiameterWithDecimal * 1000);
+						traverseDataCounter++;
+						break;
+					}
+					
 
 					default:
 					traverseDataCounter = 0;
@@ -524,7 +538,7 @@ void TaskGetFullUpdate(void *pvParameters)  // This is a task.
 						command.command = "velocity";
 						command.hardwareType = hardwareType.puller;
 						serialProcessing.SendDataToDevice(&command);
-						delay(10);
+						delay(20);
 						fullUpdateCounter++;
 						break;
 
@@ -532,7 +546,7 @@ void TaskGetFullUpdate(void *pvParameters)  // This is a task.
 						command.command = "PullerRestartReason";
 						command.hardwareType = hardwareType.puller;
 						serialProcessing.SendDataToDevice(&command);
-						delay(10);
+						delay(20);
 						fullUpdateCounter++;
 						break;
 
@@ -573,6 +587,14 @@ void TaskGetFullUpdate(void *pvParameters)  // This is a task.
 						break;
 
 						case 7:
+						command.command = "SpoolWeightLimit";
+						command.hardwareType = hardwareType.internal;
+						command.value = nvm_operations.GetSpoolWeightLimit();
+						serialProcessing.SendDataToDevice(&command);
+						fullUpdateCounter++;
+						break;
+
+						case 8:
 						command.command = "MotherboardRestartReason";
 						command.hardwareType = hardwareType.internal;
 						command.value = restartReason;
@@ -651,16 +673,18 @@ void TaskCalculate(void *pvParameters)  // This is a task.
 			if (serialProcessing.FilamentCapture )
 			{
 				float specificGracity = atof(nvm_operations.GetSpecificGravity());
-				int64_t timeDifference = 0;
-				uint32_t filamentLengthDelta = 0;
-				int64_t currentTime = 0;
+				static float filamentWeights[10] = {0};
+				static uint32_t filamentTimes[10] = {0};
+				static int i = 0;
 				//SPOOLWEIGHT
 				if (FILAMENTLENGTH != previousLength)
 				{
 					if (spoolWeight < 0) {spoolWeight = 0.0;}
 					spoolWeight = spoolWeight + (HALF_PI / 2.0) * pow(FILAMENTDIAMETER, 2) * (FILAMENTLENGTH - previousLength) * specificGracity;
+					filamentWeights[i] = spoolWeight;
+					filamentTimes[i++] = millis();
 					previousLength = FILAMENTLENGTH;
-	
+					
 					SPOOLWEIGHT = uint32_t(spoolWeight);
 					char value[MAX_CMD_LENGTH] = {0};
 					CONVERT_NUMBER_TO_STRING(INT_FORMAT, SPOOLWEIGHT, value);
@@ -674,8 +698,29 @@ void TaskCalculate(void *pvParameters)  // This is a task.
 					{
 						serialProcessing.SendDataToDevice(&command);
 					}
-	
+					
 					previousCaptureState = serialProcessing.FilamentCapture;
+
+					if (i >= 5)
+					{
+						uint32_t timeDelta = filamentTimes[i - 1]- filamentTimes[0];
+						float weightDelta = filamentWeights[i - 1] - filamentWeights[0];
+						float rate = (60.0 * (60.0 * ((weightDelta) / (float)(timeDelta / 1000.0)))) / 1000.0;
+						i = 0;
+						
+						value[MAX_CMD_LENGTH] = {0};
+						CONVERT_NUMBER_TO_STRING("%0.3f", abs(rate), value);
+						command = {0};
+						command.command = "OutputRate";
+						command.hardwareType = hardwareType.internal;
+						command.value = value;
+						if (!serialProcessing.FullUpdateRequested && command.hardwareType != NULL)
+						{
+							serialProcessing.SendDataToDevice(&command);
+						}
+					}
+
+
 				}
 				
 			}

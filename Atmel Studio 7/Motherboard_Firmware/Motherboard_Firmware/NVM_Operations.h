@@ -25,6 +25,8 @@ class NVM_Operations {
 	void init();
 	bool SetSpecificGravity(float value);
 	char *GetSpecificGravity(void);
+	bool SetSpoolWeightLimit(uint32_t value);
+	char *GetSpoolWeightLimit(void);
 
 
 	private:
