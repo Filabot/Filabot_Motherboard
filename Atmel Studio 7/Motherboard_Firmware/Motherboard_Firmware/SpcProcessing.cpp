@@ -311,7 +311,7 @@ void SpcProcessing::StartQuery(void)
 	} //TODO debug code remove when done testing
 	
 	SPC_ISR_LOCK = true; //lock ISR so main program loop doesn't interrupt
-	attachInterrupt(digitalPinToInterrupt(INDICATOR_CLK), ISR_SPC, RISING);
+	attachInterrupt(digitalPinToInterrupt(INDICATOR_CLK), ISR_SPC, FALLING);
 	//for (int i = 0; i < 10; i++){
 	delayMicroseconds(150); //this delay lengthens the inverted low pulse to the SPC stream. 2ms is the minimum time for the SPC to initiate the clock signal properly, maybe a timer is better?
 	

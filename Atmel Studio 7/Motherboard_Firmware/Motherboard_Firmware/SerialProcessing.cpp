@@ -64,15 +64,7 @@ unsigned int SerialProcessing::CheckSerial(_SerialNative *port, int portNumber)
 
 	if (port->available() > 0)
 	{
-		
-		
-		
 		port->readBlock(computerdata, MAX_CMD_LENGTH);
-		
-		
-		
-		//computer_bytes_received = port->findUntil()
-		//port->readBytes(computerdata, MAX_CMD_LENGTH);
 		
 		for (int i = 0; i < MAX_CMD_LENGTH; i++){
 			if (computerdata[i] > 0) {
@@ -84,16 +76,7 @@ unsigned int SerialProcessing::CheckSerial(_SerialNative *port, int portNumber)
 				computer_bytes_received++;
 			}
 		}
-		//computer_bytes_received = port->readBytesUntil(10, computerdata, MAX_CMD_LENGTH); //We read the data sent from the serial monitor(pc/mac/other) until we see a <CR>. We also count how many characters have been received
-		//computerdata[computer_bytes_received] = 0; //We add a 0 to the spot in the array just after the last character we received.. This will stop us from transmitting incorrect data that may have been left in the buffer
-		
-		//while(port->available()){
-		//port->read();
-		//} //flush buffer
 	}
-	
-	
-
 
 	if (computer_bytes_received != 0) {             //If computer_bytes_received does not equal zero
 		
@@ -139,23 +122,27 @@ unsigned int SerialProcessing::CheckSerial(HardwareSerial *port, int portNumber)
 		
 	}
 
-	if (i != 0) {
+	if (i > 1) 
+	{
 		CommandParse(&sCommand, computerdata);
 		
-		computer_bytes_received = 0;                  //Reset the var computer_bytes_received to equal 0
+		if (sCommand.tokenCount == 4)
+		{
+			computer_bytes_received = 0;                  //Reset the var computer_bytes_received to equal 0
 		
-		if (portNumber == 0) //if data comes from USB/PC
-		{
-			ProcessDataFromPC(&sCommand);
-		}
-		else //if data comes from expander
-		{
-			if (sCommand.hardwareType == hardwareType.puller)
+			if (portNumber == 0) //if data comes from USB/PC
 			{
-				int i = 0;
-				i = 1;
+				ProcessDataFromPC(&sCommand);
 			}
-			SendToPC(&sCommand);
+			else //if data comes from expander
+			{
+				if (sCommand.hardwareType == hardwareType.puller)
+				{
+					int i = 0;
+					i = 1;
+				}
+				SendToPC(&sCommand);
+			}
 		}
 	}
 	
@@ -170,18 +157,33 @@ unsigned int SerialProcessing::CommandParse(SerialCommand *sCommand, char str[MA
 	str_replace(str, "\r", "");
 	str_replace(str, "\n", "");
 
-	char *hardwareID = strtok(str, DELIMITER); //hardware ID
-	char *cmd = strtok(NULL, DELIMITER);
-	char *arguments = strtok(NULL, DELIMITER);
+	char str2[MAX_CMD_LENGTH] = {0};
+	strcpy(str2, str);
 
-	//if (cmd != '\0' || arguments != '\0'){
-	//SerialNative.print(hardwareID);
-	//SerialNative.print(";");
-	//SerialNative.print(cmd);
-	//SerialNative.print(";");
-	//SerialNative.println(arguments);
-	//}
+	int16_t tokenCount = 0;
+	char *ptr = str;
 
+	while((ptr = strchr(ptr, DELIMITER[0])) != NULL)
+	{
+		tokenCount++;
+		ptr++;
+	}
+
+
+	char *hardwareID = strtoke(str, DELIMITER); //hardware ID
+	char *cmd = strtoke(NULL, DELIMITER);
+	char *arguments = strtoke(NULL, DELIMITER);
+	char *checksum = strtoke(NULL, DELIMITER);
+
+	if (!checksumPassed(checksum, str2))
+	{
+		SerialCommand sCommand;
+		sCommand.hardwareType = hardwareType.internal;
+		sCommand.command = "Checksum Failure";
+		sCommand.value = NULL;
+		SendDataToDevice(&sCommand);
+		return 0;
+	}
 
 	for (int i=0; hardwareID[i]!= '\0'; i++)
 	{
@@ -193,9 +195,12 @@ unsigned int SerialProcessing::CommandParse(SerialCommand *sCommand, char str[MA
 		}
 	}
 
+	
 	sCommand->hardwareType = atoi(hardwareID);
 	sCommand->command = cmd;
 	sCommand->value = arguments;
+	sCommand->tokenCount = tokenCount;
+	
 
 	//char output[MAX_CMD_LENGTH] = {0};
 	//BuildSerialOutput(sCommand, output);
@@ -228,6 +233,7 @@ unsigned int SerialProcessing::SendDataToDevice(SerialCommand *sCommand)
 	{
 		//serialPortExpander.channel
 		_serialPortExpander.ProcessSerialExpander(sCommand);
+		delay(20);
 	}
 	if (sCommand->hardwareType == hardwareType.internal)
 	{
@@ -275,13 +281,26 @@ unsigned int SerialProcessing::SendScreenData(SerialCommand *sCommand)
 
 void SerialProcessing::CheckInteralCommands(SerialCommand *sCommand)
 {
+	if ( strcmp(sCommand->command, "NominalDiameter") == 0)
+	{
+		nvm_operations.SetNominalDiameter(atof(sCommand->value), true);
+	}
+	if ( strcmp(sCommand->command, "UpperLimit") == 0)
+	{
+		nvm_operations.SetUpperLimit(atof(sCommand->value), true);
+	}
+	if ( strcmp(sCommand->command, "LowerLimit") == 0)
+	{
+		nvm_operations.SetLowerLimit(atof(sCommand->value), true);
+	}
+	
 	if ( strcmp(sCommand->command, "SpecificGravity") == 0)
 	{
-		nvm_operations.SetSpecificGravity(atof(sCommand->value));
+		nvm_operations.SetSpecificGravity(atof(sCommand->value), true);
 	}
 	if ( strcmp(sCommand->command, "SpoolWeightLimit") == 0)
 	{
-		nvm_operations.SetSpoolWeightLimit(atoi(sCommand->value));
+		nvm_operations.SetSpoolWeightLimit(atoi(sCommand->value), true);
 	}
 	if ( strcmp(sCommand->command, "GetFullUpdate") == 0)
 	{
@@ -372,13 +391,86 @@ void SerialProcessing::str_replace(char src[MAX_CMD_LENGTH], char *oldchars, cha
 
 void BuildSerialOutput(SerialCommand *sCommand, char *outputBuffer)
 {
-	if (sCommand->value == NULL)
-	{
-		sprintf(outputBuffer, OUTPUT_STRING_DS, sCommand->hardwareType, sCommand->command, sCommand->value);
-		return;
-	}
+	char buf[MAX_CMD_LENGTH] = {0};
+	sCommand->checksum = 0;
 
-	sprintf(outputBuffer, OUTPUT_STRING_DSS, sCommand->hardwareType, sCommand->command, sCommand->value);
+	if (sCommand->value == NULL)
+		sCommand->value = "";
+
+	sprintf(buf, OUTPUT_STRING_DSS, sCommand->hardwareType, sCommand->command, sCommand->value);
+
+	for (int i = 0; i < MAX_CMD_LENGTH; i++)
+	{
+		sCommand->checksum = sCommand->checksum ^ buf[i]; //checksum, then add to command
+	}
+	
+	sprintf(outputBuffer, OUTPUT_STRING_DSSS, sCommand->hardwareType, sCommand->command, sCommand->value, sCommand->checksum);
+
+
+}
+
+char* strtoke(char *str, const char *delim)
+{
+	static char *start = NULL; /* stores string str for consecutive calls */
+	char *token = NULL; /* found token */
+	/* assign new start in case */
+	if (str) start = str;
+	/* check whether text to parse left */
+	if (!start) return NULL;
+	/* remember current start as found token */
+	token = start;
+	/* find next occurrence of delim */
+	start = strpbrk(start, delim);
+	/* replace delim with terminator and move start to follower */
+	if (start) *start++ = '\0';
+	/* done */
+	return token;
+}
+
+bool checksumPassed (char *serialChecksum, char *serialStringToCheck)
+{
+
+	char str2[MAX_CMD_LENGTH] = {0};
+	char str3[MAX_CMD_LENGTH] = {0};
+	strcpy(str2, serialStringToCheck);
+
+
+	if (serialChecksum == NULL || serialChecksum == "" || serialChecksum[0] == '\0')
+	return false;
+
+	int32_t tCount = 0;
+	int32_t tokenPosition = 0;
+	byte checksumValue = 0;
+	byte strPtr = 0;
+	for (int i = 0; i < MAX_CMD_LENGTH; ++i)
+	{
+		if (tCount != 3)
+		{
+			str3[strPtr++] = str2[i];
+		}
+		else
+		{
+			if (str2[i] == ';')
+			{
+				tCount++;
+			}
+		}
+		if (str2[i] == ';' && tCount < 3)
+		{
+			tokenPosition = i;
+			tCount++;
+		}
+	}
+	char *test = str3;
+	for (int i = 0; i < MAX_CMD_LENGTH; ++i)
+	{
+		checksumValue = checksumValue ^ str3[i];
+	}
+	if (checksumValue != atoi(serialChecksum))
+	return false;
+
+	return true;
+
 }
 
 void PrintRandomRPMData()

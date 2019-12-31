@@ -14,6 +14,8 @@ typedef struct
 	uint16_t hardwareType; //see hardwareTypes.h
 	char *command;
 	char *value;
+	uint16_t tokenCount;
+	byte checksum;
 } SerialCommand;
 
 typedef struct 

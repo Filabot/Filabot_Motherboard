@@ -389,7 +389,7 @@ void TaskGetPullerData(void *pvParameters)  // This is a task.
 				if (!serialProcessing.FullUpdateRequested && command.hardwareType != NULL)
 				{
 					serialProcessing.SendDataToDevice(&command);
-					delay(20); //puller likes to take its sweet time responding, need at least 10ms to sync back...
+					//delay(20); //puller likes to take its sweet time responding, need at least 10ms to sync back...
 				}
 			}
 
@@ -502,7 +502,7 @@ void TaskCheckEncoder(void *pvParameters)  // This is a task.
 				if (!serialProcessing.FullUpdateRequested && sCommand.hardwareType != NULL)
 				{
 					serialProcessing.SendDataToDevice(&sCommand);
-					delay(10);
+					//delay(10);
 				}
 				previousEncoderValue = encoderValue;
 			}
@@ -538,7 +538,7 @@ void TaskGetFullUpdate(void *pvParameters)  // This is a task.
 						command.command = "velocity";
 						command.hardwareType = hardwareType.puller;
 						serialProcessing.SendDataToDevice(&command);
-						delay(20);
+						//delay(20);
 						fullUpdateCounter++;
 						break;
 
@@ -546,7 +546,7 @@ void TaskGetFullUpdate(void *pvParameters)  // This is a task.
 						command.command = "PullerRestartReason";
 						command.hardwareType = hardwareType.puller;
 						serialProcessing.SendDataToDevice(&command);
-						delay(20);
+						//delay(20);
 						fullUpdateCounter++;
 						break;
 
@@ -579,6 +579,30 @@ void TaskGetFullUpdate(void *pvParameters)  // This is a task.
 						break;
 						
 						case 6:
+						command.command = "NominalDiameter";
+						command.hardwareType = hardwareType.internal;
+						command.value = nvm_operations.GetNominalDiameter();
+						serialProcessing.SendDataToDevice(&command);
+						fullUpdateCounter++;
+						break;
+
+						case 7:
+						command.command = "UpperLimit";
+						command.hardwareType = hardwareType.internal;
+						command.value = nvm_operations.GetUpperLimit();
+						serialProcessing.SendDataToDevice(&command);
+						fullUpdateCounter++;
+						break;
+						
+						case 8:
+						command.command = "LowerLimit";
+						command.hardwareType = hardwareType.internal;
+						command.value = nvm_operations.GetLowerLimit();
+						serialProcessing.SendDataToDevice(&command);
+						fullUpdateCounter++;
+						break;
+						
+						case 9:
 						command.command = "SpecificGravity";
 						command.hardwareType = hardwareType.internal;
 						command.value = nvm_operations.GetSpecificGravity();
@@ -586,7 +610,7 @@ void TaskGetFullUpdate(void *pvParameters)  // This is a task.
 						fullUpdateCounter++;
 						break;
 
-						case 7:
+						case 10:
 						command.command = "SpoolWeightLimit";
 						command.hardwareType = hardwareType.internal;
 						command.value = nvm_operations.GetSpoolWeightLimit();
@@ -594,7 +618,7 @@ void TaskGetFullUpdate(void *pvParameters)  // This is a task.
 						fullUpdateCounter++;
 						break;
 
-						case 8:
+						case 11:
 						command.command = "MotherboardRestartReason";
 						command.hardwareType = hardwareType.internal;
 						command.value = restartReason;
@@ -645,7 +669,7 @@ void TaskFilamentCapture(void *pvParameters)  // This is a task.
 					{
 						serialProcessing.SendDataToDevice(&command);
 						command.hardwareType = hardwareType.puller;
-						delay(10);
+						//delay(10);
 						serialProcessing.SendDataToDevice(&command);
 					}
 					previousCaptureState = serialProcessing.FilamentCapture;
@@ -672,15 +696,15 @@ void TaskCalculate(void *pvParameters)  // This is a task.
 
 			if (serialProcessing.FilamentCapture )
 			{
-				float specificGracity = atof(nvm_operations.GetSpecificGravity());
+				float specificGravity = atof(nvm_operations.GetSpecificGravity());
 				static float filamentWeights[10] = {0};
 				static uint32_t filamentTimes[10] = {0};
 				static int i = 0;
 				//SPOOLWEIGHT
-				if (FILAMENTLENGTH != previousLength)
+				if (FILAMENTLENGTH != previousLength && FILAMENTLENGTH > previousLength )
 				{
 					if (spoolWeight < 0) {spoolWeight = 0.0;}
-					spoolWeight = spoolWeight + (HALF_PI / 2.0) * pow(FILAMENTDIAMETER, 2) * (FILAMENTLENGTH - previousLength) * specificGracity;
+					spoolWeight = spoolWeight + (HALF_PI / 2.0) * pow(FILAMENTDIAMETER, 2) * (FILAMENTLENGTH - previousLength) * specificGravity;
 					filamentWeights[i] = spoolWeight;
 					filamentTimes[i++] = millis();
 					previousLength = FILAMENTLENGTH;

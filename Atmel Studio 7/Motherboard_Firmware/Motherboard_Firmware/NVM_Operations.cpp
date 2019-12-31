@@ -44,13 +44,88 @@ void NVM_Operations::init(){
 	ReadStorage();
 }
 
-bool NVM_Operations::SetSpecificGravity(float value)
+bool NVM_Operations::SetNominalDiameter(float value, bool saveStorage)
+{
+	if (value != NVM_Storage.NominalDiameter)
+	{
+		NVM_Storage.NominalDiameter = value;
+		if (saveStorage)
+		{
+			SaveStorage();
+			ReadStorage();
+		}
+	}
+
+	return true;
+}
+
+char *NVM_Operations::GetNominalDiameter(void)
+{
+	static char output[MAX_CMD_LENGTH] = {0};
+	CONVERT_NUMBER_TO_STRING("%0.2f", NVM_Storage.NominalDiameter, output);
+	
+
+	return output;
+}
+
+bool NVM_Operations::SetUpperLimit(float value, bool saveStorage)
+{
+	if (value != NVM_Storage.UpperLimit)
+	{
+		NVM_Storage.UpperLimit = value;
+		if (saveStorage)
+		{
+			SaveStorage();
+			ReadStorage();
+		}
+	}
+
+	return true;
+}
+
+char *NVM_Operations::GetUpperLimit(void)
+{
+	static char output[MAX_CMD_LENGTH] = {0};
+	CONVERT_NUMBER_TO_STRING("%0.2f", NVM_Storage.UpperLimit, output);
+	
+
+	return output;
+}
+
+bool NVM_Operations::SetLowerLimit(float value, bool saveStorage)
+{
+	if (value != NVM_Storage.LowerLimit)
+	{
+		NVM_Storage.LowerLimit = value;
+		if (saveStorage)
+		{
+			SaveStorage();
+			ReadStorage();
+		}
+	}
+
+	return true;
+}
+
+char *NVM_Operations::GetLowerLimit(void)
+{
+	static char output[MAX_CMD_LENGTH] = {0};
+	CONVERT_NUMBER_TO_STRING("%0.2f", NVM_Storage.LowerLimit, output);
+	
+
+	return output;
+}
+
+bool NVM_Operations::SetSpecificGravity(float value, bool saveStorage)
 {
 	if (value != NVM_Storage.SpecificGravity)
 	{
 		NVM_Storage.SpecificGravity = value;
-		SaveStorage();
-		ReadStorage();
+		if (saveStorage)
+		{
+			SaveStorage();
+			ReadStorage();
+		}
 	}
 
 	return true;
@@ -65,13 +140,16 @@ char *NVM_Operations::GetSpecificGravity(void)
 	return output;
 }
 
-bool NVM_Operations::SetSpoolWeightLimit(uint32_t value)
+bool NVM_Operations::SetSpoolWeightLimit(uint32_t value, bool saveStorage)
 {
 	if (value != NVM_Storage.SpoolWeightLimit)
 	{
 		NVM_Storage.SpoolWeightLimit = value;
-		SaveStorage();
-		ReadStorage();
+		if (saveStorage)
+		{
+			SaveStorage();
+			ReadStorage();
+		}
 	}
 
 	return true;

@@ -17,8 +17,9 @@
 #define FLOAT_FORMAT "%.2f"
 #define DOUBLE_FORMAT "%lf"
 #define LL_FORMAT "%lld"
-#define OUTPUT_STRING_DSS "%d;%s;%s"
-#define OUTPUT_STRING_DS "%d;%s"
+#define OUTPUT_STRING_DSS "%d;%s;%s;"
+#define OUTPUT_STRING_DSSS "%d;%s;%s;%d;"
+#define OUTPUT_STRING_DS "%d;%s;"
 #define STRING_FORMAT "%s"
 #define SCREENFORMAT "%s%s"
 

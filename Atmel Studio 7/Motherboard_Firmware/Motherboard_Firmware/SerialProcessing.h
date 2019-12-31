@@ -58,7 +58,8 @@ bool ExistsInIntArray(uint16_t *arrayToCheck, size_t arraySize, uint16_t numberT
 void BuildSerialOutput(SerialCommand *sCommand, char *outputBuffer);
 bool startsWith(const char *pre, const char *str);
 void PrintRandomRPMData();
-
+char* strtoke(char *str, const char *delim);
+bool checksumPassed (char *serialChecksum, char *serialStringToCheck);
 
 
 

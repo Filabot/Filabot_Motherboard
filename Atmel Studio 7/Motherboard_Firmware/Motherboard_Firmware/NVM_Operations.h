@@ -23,9 +23,15 @@ class NVM_Operations {
 	~NVM_Operations();
 
 	void init();
-	bool SetSpecificGravity(float value);
+	bool SetNominalDiameter(float value, bool saveStorage);
+	char *GetNominalDiameter(void);
+	bool SetUpperLimit(float value, bool saveStorage);
+	char *GetUpperLimit(void);
+	bool SetLowerLimit(float value, bool saveStorage);
+	char *GetLowerLimit(void);
+	bool SetSpecificGravity(float value, bool saveStorage);
 	char *GetSpecificGravity(void);
-	bool SetSpoolWeightLimit(uint32_t value);
+	bool SetSpoolWeightLimit(uint32_t value, bool saveStorage);
 	char *GetSpoolWeightLimit(void);
 
 
