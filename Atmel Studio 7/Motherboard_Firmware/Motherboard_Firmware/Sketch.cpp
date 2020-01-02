@@ -294,9 +294,10 @@ void TaskCheckSPC(void *pvParameters)  // This is a task.
 			xLastWakeTime = xTaskGetTickCount();
 			int32_t waitTime = 25;
 
+			
+			spcProcessing.QueryFailed(250);
 			if (HANDSHAKE)
 			{
-
 				if (spcProcessing.ISR_READY() && !spcProcessing.HasNewData)
 				{
 					spcProcessing.StartQuery();//enable interrupts and start the bit gathering from spc
@@ -784,7 +785,15 @@ void TaskHandshake(void *pvParameters)  // This is a task.
 
 					serialProcessing.SendDataToDevice(&command);
 				}
-				//HANDSHAKE = true;
+				else
+				{
+					SerialCommand command;
+					command.hardwareType = hardwareType.internal;
+					command.command = "KeepAlive";
+					command.value = "Connected";
+
+					serialProcessing.SendDataToDevice(&command);
+				}
 			}
 			else
 			{

@@ -388,6 +388,7 @@ static bool USBD_SendOtherConfiguration(int maxlen)
 
 static bool USBD_SendDescriptor(USBSetup& setup)
 {
+	const uint8_t STRING_PRODUCT[] = "Filalogger";
 	uint8_t t = setup.wValueH;
 	uint8_t desc_length = 0;
 	int ret = 0;

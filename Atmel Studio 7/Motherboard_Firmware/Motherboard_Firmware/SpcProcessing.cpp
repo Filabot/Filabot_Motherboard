@@ -60,12 +60,10 @@ void ISR_SPC()
 {
 	//delayMicroseconds(50);
 	rawSPC_ISR[ISR_LOOP_COUNTER++] = digitalRead(INDICATOR_DAT) == 0 ? 48 : 49;
-	//digitalWrite(INDICATOR_REQ, HIGH);
+	
 	if (ISR_LOOP_COUNTER >= 52) //there can only be 52 bits to the spc data
 	{
 		detachInterrupt(digitalPinToInterrupt(INDICATOR_CLK)); //dump the interrupt to stop anymore triggering
-		//digitalWrite(INDICATOR_REQ, LOW);
-		
 		
 		for (int i = 0; i < 52; i++)
 		{
@@ -119,14 +117,13 @@ void SpcProcessing::RunSPCDataLoop(void)
 				
 				SerialCommand sError;
 				sError.hardwareType = hardwareType.indicator;
-				sError.command = "INDICATOR";
-				sError.value = "A SPC PROCESSING ERROR HAS OCCURRED";
+				sError.command = "DiameterError";
+				sError.value = "SPC Datastream Validation Error";
 				
-				numberErrors++; //for debug, remove when done
-				eError.hardwareType = hardwareType.indicator;
-				eError.errorLevel = errorLevel.datastream_validation_failed;
-				eError.errorCode = errorCode.spc_data_error;
-				AddError(&eError);
+				//eError.hardwareType = hardwareType.indicator;
+				//eError.errorLevel = errorLevel.datastream_validation_failed;
+				//eError.errorCode = errorCode.spc_data_error;
+				//AddError(&eError);
 
 				char sErrorOutput [MAX_CMD_LENGTH] = {0};
 				BuildSerialOutput(&sError, sErrorOutput);
@@ -143,10 +140,6 @@ void SpcProcessing::RunSPCDataLoop(void)
 
 		if (dataStreamValid)
 		{
-			
-
-			ClearError(errorCode.diameter_device_disconnected);
-			ClearError(errorCode.spc_data_error);
 			byte bytes[13] = {0};
 			for (int i = 0; i < 13; i++)
 			{
@@ -173,11 +166,7 @@ void SpcProcessing::RunSPCDataLoop(void)
 			
 			int decimalPointLocation = bytes[11];
 			
-			
 			SPCDiameter = preDecimalNumber / (pow(10, decimalPointLocation)); //add decimal to number
-			//SPCDiameter = 1.75;
-			
-			
 			
 			spcDiameter.decimalPointLocation = decimalPointLocation;
 			spcDiameter.intDiameterNoDecimal = preDecimalNumber;
@@ -189,24 +178,12 @@ void SpcProcessing::RunSPCDataLoop(void)
 			CONVERT_FLOAT_TO_STRING(SPCDiameter, decimalNumber);
 			CONVERT_FLOAT_TO_STRING(SPCDiameter, spcDiameter.charDiameterWithDecimal);
 
-
-			//Serial.println(SPCDiameter);
-			
-			
-			SerialCommand sCommand;
-			sCommand.hardwareType = hardwareType.indicator;
-			sCommand.command = "INDICATOR";
-			sCommand.value = decimalNumber;
-			
-			BuildSerialOutput(&sCommand, serialOutputBuffer);
 			HasNewData = true;
 
 			for (int i = 0; i < 52; i++) //clean up array for next go around, cannot use memset since rawSPC is volatile
 			{
-				//SerialNative.print(rawSPC[i] == 48 ? "0" : "1");
 				rawSPC[i] = 0;
 			}
-			//SerialNative.println("");
 			
 			MAIN_LOOP_COUNTER = 0;
 			ISR_LOOP_COUNTER = 0;
@@ -237,43 +214,43 @@ int SpcProcessing::GetLoopCounts(void)
 
 bool SpcProcessing::QueryFailed(int32_t waitTime)
 {
+	if (!HANDSHAKE)
+		previousQuery = millis();
+
 	if (millis() >= previousQuery + (waitTime)) //100 milliseconds //if previous query didn't finish in time it is dead
 	{
-		StopQuery();
+		//StopQuery();
 		//SerialNative.println("Query Error");
-		eError.hardwareType = hardwareType.indicator;
-		eError.errorLevel = errorLevel.device_disconnected;
-		eError.errorCode = errorCode.diameter_device_disconnected;
-		AddError(&eError);
+		//eError.hardwareType = hardwareType.indicator;
+		//eError.errorLevel = errorLevel.device_disconnected;
+		//eError.errorCode = errorCode.diameter_device_disconnected;
+		//AddError(&eError);
+
+		SerialCommand command;
+		command.hardwareType = hardwareType.indicator;
+		command.command = "DiameterError";
+		command.value = "SPC Failed to Acquire Data";
+
+		char buffer[MAX_CMD_LENGTH] = {0};
+		BuildSerialOutput(&command, buffer);
+
+		SerialNative.println(buffer);
+
 		previousQuery = millis();
 		
 		return true;
 	}
-
 	
-	//if (GetLoopCounts() > 60000) //50000 ticks before a failure is recorded (maybe time base is better?) need to measure time between routine to test time base
-	//{
-	//
-	//StopQuery();
-	////SerialNative.println("Query Error");
-	//eError.hardwareType = hardwareType.indicator;
-	//eError.errorLevel = errorLevel.device_disconnected;
-	//eError.errorCode = errorCode.diameter_device_disconnected;
-	//AddError(&eError);
-	//
-	//return true;
-	//}
 	return false;
 }
 
-bool SpcProcessing::HasError(void){
-
+bool SpcProcessing::HasError(void)
+{
 	return HasErrors();
 }
 
-Error *SpcProcessing::GetError(void){
-
-
+Error *SpcProcessing::GetError(void)
+{
 	return &eError;
 }
 
@@ -295,27 +272,16 @@ int SpcProcessing::PrintRandomDiameterData(void)
 }
 bool SpcProcessing::ISR_READY(void)
 {
-	
 	return !SPC_ISR_LOCK;
 }
 
 void SpcProcessing::StartQuery(void)
 {
-
-	if (millis() > debugTime + 5000)
-	{
-		
-		
-		//SerialNative.println("Number of errors: %d", numberErrors);
-		debugTime = millis();
-	} //TODO debug code remove when done testing
-	
 	SPC_ISR_LOCK = true; //lock ISR so main program loop doesn't interrupt
 	attachInterrupt(digitalPinToInterrupt(INDICATOR_CLK), ISR_SPC, FALLING);
-	//for (int i = 0; i < 10; i++){
+
 	delayMicroseconds(150); //this delay lengthens the inverted low pulse to the SPC stream. 2ms is the minimum time for the SPC to initiate the clock signal properly, maybe a timer is better?
 	
-	//}
 	ISR_LOOP_COUNTER = 0;
 	MAIN_LOOP_COUNTER = 0;
 	
