@@ -13,12 +13,17 @@
 #include "SerialProcessing.h"
 #include "Error.h"
 #include "Structs.h"
+#include "FreeRTOS_ARM.h"
 
 
 SpcProcessing *SpcProcessing::firstinstance;
 SpcProcessing *thisInstance;
 
+SerialProcessing serialProcessing1;
+
+
 void ISR_SPC();
+bool dataInvalid = false;
 
 // default constructor main entry point
 SpcProcessing::SpcProcessing()
@@ -34,14 +39,15 @@ SpcProcessing::SpcProcessing()
 
 volatile int numberErrors;
 long debugTime = 0;
-
+volatile uint32_t isrTime = 0;
 
 volatile bool SPC_ISR_LOCK = false;
 volatile char rawSPC_ISR[53] = {0};
 volatile int ISR_LOOP_COUNTER = 0;
 volatile int MAIN_LOOP_COUNTER = 0;
 volatile char rawSPC[53] = {0};
-int previousQuery = 0;
+TickType_t previousQuery = 0;
+volatile bool tc6TimerRunning = false;
 
 
 void SpcProcessing::init(void)
@@ -50,54 +56,148 @@ void SpcProcessing::init(void)
 	pinMode(INDICATOR_CLK, INPUT_PULLUP);
 	pinMode(INDICATOR_DAT, INPUT_PULLUP);
 
-	
+	startTimer(TC2, 0, TC6_IRQn, 6000); //TC1 channel 0, the IRQ for that channel and the desired frequency
+
 	//attachInterrupt(digitalPinToInterrupt(INDICATOR_CLK), ISR_SPC, FALLING);
 	
 	StartQuery();
 }
 
-void ISR_SPC()
+void TC6_Handler()
 {
-	//delayMicroseconds(50);
-	rawSPC_ISR[ISR_LOOP_COUNTER++] = digitalRead(INDICATOR_DAT) == 0 ? 48 : 49;
-	
-	if (ISR_LOOP_COUNTER >= 52) //there can only be 52 bits to the spc data
+	TC_GetStatus(TC2, 0);
+	bool clockPulse = GPIO_READ(INDICATOR_CLK);
+
+
+	if (SPC_ISR_LOCK && tc6TimerRunning)
 	{
-		detachInterrupt(digitalPinToInterrupt(INDICATOR_CLK)); //dump the interrupt to stop anymore triggering
-		
-		for (int i = 0; i < 52; i++)
-		{
-			rawSPC[i] = rawSPC_ISR[i]; //copy volatile memory to non-volatile and clear the volatile to synchronize the main program loop
-			rawSPC_ISR[i] = 0;
-		}
-		
-		SPC_ISR_LOCK = false; //unlock ISR to synchronize spc data loop
+		static bool previousClockPulse = 1;
 
-		if (thisInstance)
+		if (previousClockPulse && !clockPulse) //catch falling edge
 		{
-			thisInstance->RunSPCDataLoop();
-			thisInstance->StopQuery();
+			bool dat = GPIO_READ(INDICATOR_DAT);
+			if (dat)
+			{
 
+				rawSPC_ISR[ISR_LOOP_COUNTER++] = 49;
+			}
+			else
+			{
+				rawSPC_ISR[ISR_LOOP_COUNTER++] = 48;
+			}
+			
+
+			if (ISR_LOOP_COUNTER >= 52) //there can only be 52 bits to the spc data
+			{
+				BaseType_t xHigherPriorityTaskWoken;
+				xHigherPriorityTaskWoken = pdFALSE;
+				thisInstance->StopQuery();
+				xQueueSendFromISR( xQueue, ( void *)&rawSPC_ISR, &xHigherPriorityTaskWoken );
+				SPC_ISR_LOCK = false; //unlock ISR to synchronize spc data loop
+				//thisInstance->RunSPCDataLoop();
+				thisInstance->HasNewData = true;
+				
+				if( xHigherPriorityTaskWoken )
+				{
+					/* Actual macro used here is port specific. */
+					portYIELD_FROM_ISR (xHigherPriorityTaskWoken);
+				}
+			}
+			
 		}
-		
+		previousClockPulse = clockPulse;
 	}
 }
 
+void startTimer(Tc *tc, uint32_t channel, IRQn_Type irq, uint32_t frequency) {
+	pmc_set_writeprotect(false);
+	pmc_enable_periph_clk((uint32_t)irq);
+	//TC_Configure(tc, channel, TC_CMR_WAVE | TC_CMR_WAVSEL_UP_RC | TC_CMR_TCCLKS_TIMER_CLOCK4);
+	TC_Configure(tc, channel, TC_CMR_WAVE | TC_CMR_ACPA_SET | TC_CMR_ACPC_CLEAR | TC_CMR_CPCTRG | TC_CMR_TCCLKS_TIMER_CLOCK4);
+	uint32_t rc = VARIANT_MCK/128/frequency; //128 because we selected TIMER_CLOCK4 above
+	TC_SetRA(tc, channel, rc/2); //50% high, 50% low
+	TC_SetRC(tc, channel, rc);
+	TC_Start(tc, channel);
+	tc->TC_CHANNEL[channel].TC_IER=TC_IER_CPCS;
+	tc->TC_CHANNEL[channel].TC_IDR=~TC_IER_CPCS;
+	NVIC_EnableIRQ(irq);
+}
 
+void ISR_SPC()
+{
+	if (SPC_ISR_LOCK)
+	{
+		if (ISR_LOOP_COUNTER == 0) {isrTime=xTaskGetTickCount();}
+
+		
+		int32_t booleanTrueSum = 0;
+		
+		for (int i = 0; i < 11; ++i)
+		{
+			bool pinValue = GPIO_READ(INDICATOR_DAT);
+			if (pinValue)
+			{
+				booleanTrueSum++;
+			}
+		}
+
+		if (booleanTrueSum >= 5)
+		{
+			rawSPC_ISR[ISR_LOOP_COUNTER++] = 49;
+		}
+		else
+		{
+			rawSPC_ISR[ISR_LOOP_COUNTER++] = 48;
+		}
+		
+		if (ISR_LOOP_COUNTER >= 52) //there can only be 52 bits to the spc data
+		{
+			
+			if (thisInstance)
+			{
+				BaseType_t xHigherPriorityTaskWoken;
+				xHigherPriorityTaskWoken = pdFALSE;
+				thisInstance->StopQuery();
+				xQueueSendFromISR( xQueue, ( void *)&rawSPC_ISR, &xHigherPriorityTaskWoken );
+				SPC_ISR_LOCK = false; //unlock ISR to synchronize spc data loop
+				//thisInstance->RunSPCDataLoop();
+				thisInstance->HasNewData = true;
+				
+				if( xHigherPriorityTaskWoken )
+				{
+					/* Actual macro used here is port specific. */
+					portYIELD_FROM_ISR (xHigherPriorityTaskWoken);
+				}
+			}
+			isrTime = xTaskGetTickCount() - isrTime;
+		}
+	}
+}
 
 void SpcProcessing::RunSPCDataLoop(void)
 {
 	
 	
-	if (IsInSimulationMode)
-	{
-		PrintRandomDiameterData();
-		return;
-	}
-
-	if (!SPC_ISR_LOCK) //check for locked ISR
+	
+	BaseType_t xTaskWokenByReceive = pdFALSE;
+	if (!SPC_ISR_LOCK ) //check for locked ISR
 	{
 		//Serial.println(rawSPC);
+		xQueueReceiveFromISR(xQueue, (void *) &rawSPC, &xTaskWokenByReceive);
+
+		for (int i = 0; i < 52; ++i)
+		{
+			if (rawSPC_ISR[i] == 0) //no positions can be 0's
+			{
+				return;
+			}
+		}
+		if (dataInvalid)
+		{
+			dataInvalid = false;
+			return;
+		}
+		
 
 		if (rawSPC[0] == 0){ //if position 0 in array equals null then skip
 			//Serial.println("RESETTING FROM NO DATA");
@@ -111,7 +211,7 @@ void SpcProcessing::RunSPCDataLoop(void)
 		bool dataStreamValid = false; //set dataStreamValid false since this is the start of the verification process
 		for (unsigned int i = 0; i < 12; i++) //first 12 indices should be 1's (49), if not then the data isn't valid
 		{
-			if (rawSPC[i] == 48 || rawSPC[16] == 49) //48 is 0 (zero) in ascii 0-12 cannot be 0, and 13 cannot be 1
+			if (rawSPC[i] == 48) // || rawSPC_ISR[16] == 49) //48 is 0 (zero) in ascii 0-12 cannot be 0, and 13 cannot be 1
 			{
 				dataStreamValid = false;
 				
@@ -128,9 +228,10 @@ void SpcProcessing::RunSPCDataLoop(void)
 				char sErrorOutput [MAX_CMD_LENGTH] = {0};
 				BuildSerialOutput(&sError, sErrorOutput);
 				SerialNative.println(sErrorOutput);
-				SPCDiameter = 0.00;
+				
 				ISR_LOOP_COUNTER = 0;
-				break;
+				return;
+
 			}
 			else
 			{
@@ -150,6 +251,12 @@ void SpcProcessing::RunSPCDataLoop(void)
 					bitWrite(bytes[i], bitPointer, rawSPC[j] == 49); //49 ascii for 1 //grab nibbles from rawSPC
 					bitPointer++;
 				}
+			}
+			if (bytes[11] > 4)
+			{
+
+				dataStreamValid = false; //invalid data
+				return;
 			}
 			
 			float preDecimalNumber = 0.0;
@@ -178,7 +285,39 @@ void SpcProcessing::RunSPCDataLoop(void)
 			CONVERT_FLOAT_TO_STRING(SPCDiameter, decimalNumber);
 			CONVERT_FLOAT_TO_STRING(SPCDiameter, spcDiameter.charDiameterWithDecimal);
 
-			HasNewData = true;
+			static int numberOfZeros = 0;
+			if (spcDiameter.charDiameterWithDecimal[2] == 48 && spcDiameter.charDiameterWithDecimal[0] == 48 )
+			{
+				numberOfZeros++;
+			}
+			else
+			{
+				numberOfZeros = 0;
+			}
+			if (numberOfZeros >= 2)
+			{
+				numberOfZeros = 0;
+			}
+			if (numberOfZeros == 1)
+			{
+				previousQuery = xTaskGetTickCount();
+				return;
+			}
+
+			SerialCommand _serialCommand;
+			_serialCommand.hardwareType = hardwareType.internal;
+			_serialCommand.command = "Diameter";
+			_serialCommand.value = spcDiameter.charDiameterWithDecimal;
+			char output[MAX_CMD_LENGTH] = {0};
+			
+			FILAMENTDIAMETER = spcDiameter.floatDiameterWithDecimal;
+			serialProcessing1.SendDataToDevice(&_serialCommand);
+
+			_serialCommand.hardwareType = hardwareType.internal;
+			_serialCommand.command = "testTime";
+			itoa(isrTime, _serialCommand.value, 10);
+			if (isrTime > 100000)
+			serialProcessing1.SendDataToDevice(&_serialCommand);
 
 			for (int i = 0; i < 52; i++) //clean up array for next go around, cannot use memset since rawSPC is volatile
 			{
@@ -187,59 +326,50 @@ void SpcProcessing::RunSPCDataLoop(void)
 			
 			MAIN_LOOP_COUNTER = 0;
 			ISR_LOOP_COUNTER = 0;
-			previousQuery = millis();
+			
+			//HasNewData = true;
+			if( xTaskWokenByReceive != pdFALSE )
+			{
+				/* We should switch context so the ISR returns to a different task.
+				NOTE:  How this is done depends on the port you are using.  Check
+				the documentation and examples for your port. */
+				taskYIELD ();
+			}
 		}
-
+		previousQuery = xTaskGetTickCount();
 	}
-	
-}
-
-char *SpcProcessing::GetSerialOutputBuffer(void)
-{
-	HasNewData = false;
-	return serialOutputBuffer;
 }
 
 SpcDiameter *SpcProcessing::GetDiameter(void){
-
 	return &spcDiameter;
-	
-}
-
-int SpcProcessing::GetLoopCounts(void)
-{
-	MAIN_LOOP_COUNTER++;
-	return MAIN_LOOP_COUNTER;
 }
 
 bool SpcProcessing::QueryFailed(int32_t waitTime)
 {
-	if (!HANDSHAKE)
-		previousQuery = millis();
+	
+		static bool firstRun = true;
 
-	if (millis() >= previousQuery + (waitTime)) //100 milliseconds //if previous query didn't finish in time it is dead
-	{
-		//StopQuery();
-		//SerialNative.println("Query Error");
-		//eError.hardwareType = hardwareType.indicator;
-		//eError.errorLevel = errorLevel.device_disconnected;
-		//eError.errorCode = errorCode.diameter_device_disconnected;
-		//AddError(&eError);
+		if (firstRun)
+		{
+			previousQuery = xTaskGetTickCount();
+			firstRun = false;
+		}
+		if (xTaskGetTickCount() >= previousQuery + (waitTime)) //100 milliseconds //if previous query didn't finish in time it is dead
+		{
+			SerialCommand command;
+			command.hardwareType = hardwareType.indicator;
+			command.command = "DiameterError";
+			command.value = "SPC Failed to Acquire Data";
 
-		SerialCommand command;
-		command.hardwareType = hardwareType.indicator;
-		command.command = "DiameterError";
-		command.value = "SPC Failed to Acquire Data";
+			char buffer[MAX_CMD_LENGTH] = {0};
+			BuildSerialOutput(&command, buffer);
 
-		char buffer[MAX_CMD_LENGTH] = {0};
-		BuildSerialOutput(&command, buffer);
+			SerialNative.println(buffer);
 
-		SerialNative.println(buffer);
-
-		previousQuery = millis();
-		
-		return true;
-	}
+			previousQuery = xTaskGetTickCount();
+			
+			return true;
+		}
 	
 	return false;
 }
@@ -254,23 +384,7 @@ Error *SpcProcessing::GetError(void)
 	return &eError;
 }
 
-int SpcProcessing::PrintRandomDiameterData(void)
-{
-	char diameter[5];
-	ltoa(random(17000, 18000), diameter, 10);
-	
-	SerialNative.print("0;111111111111111111110000");
-	for (int i = 0; i < 5; i++)
-	{
-		for (int j = 0; j < 4; j++)
-		{
-			//SerialNative.print(((byte)diameter[i] >> j) & 1);
-		}
-	}
-	SerialNative.println("00100000");
-	return 0;
-}
-bool SpcProcessing::ISR_READY(void)
+volatile bool SpcProcessing::ISR_READY(void)
 {
 	return !SPC_ISR_LOCK;
 }
@@ -278,10 +392,9 @@ bool SpcProcessing::ISR_READY(void)
 void SpcProcessing::StartQuery(void)
 {
 	SPC_ISR_LOCK = true; //lock ISR so main program loop doesn't interrupt
-	attachInterrupt(digitalPinToInterrupt(INDICATOR_CLK), ISR_SPC, FALLING);
+	//attachInterrupt(digitalPinToInterrupt(INDICATOR_CLK), ISR_SPC, FALLING);
+	tc6TimerRunning = true;
 
-	delayMicroseconds(150); //this delay lengthens the inverted low pulse to the SPC stream. 2ms is the minimum time for the SPC to initiate the clock signal properly, maybe a timer is better?
-	
 	ISR_LOOP_COUNTER = 0;
 	MAIN_LOOP_COUNTER = 0;
 	
@@ -292,7 +405,8 @@ void SpcProcessing::StartQuery(void)
 
 void SpcProcessing::StopQuery(void)
 {
-	detachInterrupt(digitalPinToInterrupt(INDICATOR_CLK)); //kill interrupt
+	//detachInterrupt(digitalPinToInterrupt(INDICATOR_CLK)); //kill interrupt
+	tc6TimerRunning = false;
 	
 	digitalWrite(INDICATOR_REQ, HIGH);
 	

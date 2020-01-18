@@ -8,27 +8,43 @@
 #include "SerialPortExpander.h"
 #include "SerialNative.h"
 #include "NVM_Operations.h"
-
+#include "FreeRTOS_ARM.h"
+#include "Vector.h"
 
 
 template<size_t SIZE, class T> inline size_t array_size(T (&arr)[SIZE]);
 
 SerialProcessing *SerialProcessing::firstInstance;
 SerialPortExpander _serialPortExpander;
+SerialProcessing *thisInstanceSerialProcessing;
 
 
-//bool SIMULATIONMODE; //sets default value for simulation
 
+struct serialDataStruct
+{
+	char data[MAX_CMD_LENGTH];
+};
+
+const int ELEMENT_COUNT_MAX = 10;
+serialDataStruct storage_array[ELEMENT_COUNT_MAX] = {0};
+Vector<serialDataStruct> vector(storage_array);
+
+bool string1Complete = false;
+int chars1_read = 0;
+int index1 = 0;
+char inputString1[MAX_CMD_LENGTH] = {0};
 
 SerialProcessing::SerialProcessing(){
 	if(!firstInstance){
 		firstInstance = this;
+		thisInstanceSerialProcessing = this;
 	}
 }
 
 void SerialProcessing::init(){
 	_serialPortExpander.init();
 	SerialNative.setTimeout(50);
+	
 
 }
 
@@ -42,9 +58,29 @@ void SerialProcessing::Poll(void)
 	//if (!commandActive)
 	//{
 	CheckSerial(&Serial1, 1); //check for new data coming from expander
+	//CheckSerial(&dma_serial1, 1);
+
+	//CheckDeviceSerial();
+
 	//}
 	
 
+}
+
+void SerialProcessing::CheckDeviceSerial(void)
+{
+	while (vector.size() > 0)
+	{
+		SerialCommand sCommand = {0};
+		CommandParse(&sCommand, vector.back().data);
+		if (sCommand.tokenCount == 4)
+		{
+			SendToPC(&sCommand);
+		}
+		vector.remove(vector.size() - 1);
+	}
+
+	
 }
 
 unsigned int SerialProcessing::CheckSerial(_SerialNative *port, int portNumber)
@@ -60,7 +96,7 @@ unsigned int SerialProcessing::CheckSerial(_SerialNative *port, int portNumber)
 	port->setTimeout(10);
 
 	int pos = 0;
-	long start = millis();
+	//long start = millis();
 
 	if (port->available() > 0)
 	{
@@ -122,14 +158,81 @@ unsigned int SerialProcessing::CheckSerial(HardwareSerial *port, int portNumber)
 		
 	}
 
-	if (i > 1) 
+	if (i > 1)
 	{
 		CommandParse(&sCommand, computerdata);
 		
 		if (sCommand.tokenCount == 4)
 		{
 			computer_bytes_received = 0;                  //Reset the var computer_bytes_received to equal 0
+			
+			if (portNumber == 0) //if data comes from USB/PC
+			{
+				ProcessDataFromPC(&sCommand);
+			}
+			else //if data comes from expander
+			{
+				if (sCommand.hardwareType == hardwareType.puller)
+				{
+					int i = 0;
+					i = 1;
+				}
+				SendToPC(&sCommand);
+			}
+		}
+	}
+	
+
+	return 1;
+}
+
+unsigned int SerialProcessing::CheckSerial(DmaSerial *port, int portNumber) //check expander ports
+{
+	char computerdata[MAX_CMD_LENGTH] = {0};
+	byte computer_bytes_received = 0;
+	byte cData[MAX_CMD_LENGTH] = {0};
+
+	SerialCommand sCommand = {0};
+	int i = 0;
+
+	if (port->available() > 0)
+	{
+		computerdata[MAX_CMD_LENGTH] = {0};
 		
+		port->get(cData, MAX_CMD_LENGTH);
+
+		//while(port->available() > 0)
+		//{
+		//computerdata[i++] = port->get();
+		//if (i > MAX_CMD_LENGTH){break;}
+		//i++;
+		//}
+		
+		
+	}
+
+	int dataSize = 0;
+	for (int idx = 0; idx < MAX_CMD_LENGTH; ++idx)
+	{
+		if (cData[idx] > 0)
+		dataSize++;
+	}
+
+	if (dataSize > 1 )
+	{
+		for (int idx = 0; idx < MAX_CMD_LENGTH; ++idx)
+		{
+			computerdata[idx] = char(cData[idx]);
+			//itoa(cData[i], computerdata, 16);
+
+		}
+
+		CommandParse(&sCommand, computerdata);
+		
+		if (sCommand.tokenCount == 4)
+		{
+			computer_bytes_received = 0;                  //Reset the var computer_bytes_received to equal 0
+			
 			if (portNumber == 0) //if data comes from USB/PC
 			{
 				ProcessDataFromPC(&sCommand);
@@ -175,6 +278,8 @@ unsigned int SerialProcessing::CommandParse(SerialCommand *sCommand, char str[MA
 	char *arguments = strtoke(NULL, DELIMITER);
 	char *checksum = strtoke(NULL, DELIMITER);
 
+	char *string = str2;
+
 	if (!checksumPassed(checksum, str2))
 	{
 		SerialCommand sCommand;
@@ -200,6 +305,7 @@ unsigned int SerialProcessing::CommandParse(SerialCommand *sCommand, char str[MA
 	sCommand->command = cmd;
 	sCommand->value = arguments;
 	sCommand->tokenCount = tokenCount;
+	sCommand->checksum = atoi(checksum);
 	
 
 	//char output[MAX_CMD_LENGTH] = {0};
@@ -233,7 +339,8 @@ unsigned int SerialProcessing::SendDataToDevice(SerialCommand *sCommand)
 	{
 		//serialPortExpander.channel
 		_serialPortExpander.ProcessSerialExpander(sCommand);
-		delay(20);
+		//delay(20);
+		vTaskDelay(20);
 	}
 	if (sCommand->hardwareType == hardwareType.internal)
 	{
@@ -328,24 +435,24 @@ void SerialProcessing::ProcessFilamentCaptureState(SerialCommand *sCommand)
 	{
 		static bool previousCaptureState = false;
 
-		FilamentCapture = strcmp(sCommand->value, "1") == 0 ? true : false;
+		FilamentCapture = strcmp(sCommand->value, "1") == 0;
 
 		if (HANDSHAKE)
 		{
 			if (previousCaptureState != FilamentCapture )
 			{
 				
-				char value[MAX_CMD_LENGTH] = {0};
-				CONVERT_NUMBER_TO_STRING(STRING_FORMAT, FilamentCapture == true ? "1" : "0", value);
 				SerialCommand command = {0};
 				command.command = "FilamentCapture";
 				command.hardwareType = hardwareType.traverse;
-				command.value = value;
+				command.value = sCommand->value;
 
 				if (!FullUpdateRequested && command.hardwareType != NULL)
 				{
 					SendDataToDevice(&command);
 					command.hardwareType = hardwareType.puller;
+					SendDataToDevice(&command);
+
 					SendDataToDevice(&command);
 				}
 				previousCaptureState = FilamentCapture;
@@ -395,7 +502,7 @@ void BuildSerialOutput(SerialCommand *sCommand, char *outputBuffer)
 	sCommand->checksum = 0;
 
 	if (sCommand->value == NULL)
-		sCommand->value = "";
+	sCommand->value = "";
 
 	sprintf(buf, OUTPUT_STRING_DSS, sCommand->hardwareType, sCommand->command, sCommand->value);
 
@@ -442,7 +549,7 @@ bool checksumPassed (char *serialChecksum, char *serialStringToCheck)
 	int32_t tokenPosition = 0;
 	byte checksumValue = 0;
 	byte strPtr = 0;
-	for (int i = 0; i < MAX_CMD_LENGTH; ++i)
+	for (int i = 0; i < strlen(serialStringToCheck); ++i)
 	{
 		if (tCount != 3)
 		{
@@ -462,7 +569,7 @@ bool checksumPassed (char *serialChecksum, char *serialStringToCheck)
 		}
 	}
 	char *test = str3;
-	for (int i = 0; i < MAX_CMD_LENGTH; ++i)
+	for (int i = 0; i < strlen(str3); ++i)
 	{
 		checksumValue = checksumValue ^ str3[i];
 	}

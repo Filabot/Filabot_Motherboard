@@ -14,6 +14,8 @@
 
 SerialPortExpander *SerialPortExpander::firstInstance;
 
+DmaSerial dma_serial1 = DmaSerial((Uart*)USART0, ID_USART0);
+
 // default constructor
 SerialPortExpander::SerialPortExpander()
 {
@@ -36,7 +38,9 @@ void SerialPortExpander::init(void)
 	digitalWrite(EXPANDER_CHAN_C, bitRead(0, 2));
 	
 	Serial1.begin(115200);
-	Serial1.setTimeout(50);
+	//Serial1.setTimeout(50);
+
+	//dma_serial1.begin(SERIAL_BAUD);
 	
 }
 
@@ -60,20 +64,17 @@ void SerialPortExpander::ProcessSerialExpander(SerialCommand *sCommand)
 	}
 	else
 	{
-		//BUILD_SERIAL_OUTPUT(sCommand->hardwareType, sCommand->command, charBuilder);
 		BuildSerialOutput(sCommand, charBuilder);
 		sprintf(charBuilder, "%s%s", charBuilder, "\n");
 	}
 	
-	//SerialNative.println("serial 1 out run");
 
 
-	//BUILD_SERIAL_OUTPUT(sCommand, charBuilder);
-	//Serial1.println(charBuilder);
 	Open_channel(sCommand);
+	
 	Serial1.write(charBuilder);
-	//Serial1.write("\n");
-	Serial1.flush();
+	//dma_serial1.put(charBuilder);
+	//Serial1.flush();
 
 }
 

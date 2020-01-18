@@ -396,6 +396,12 @@
     <Compile Include="DataConversions.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="DmaSerial.cpp">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="DmaSerial.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="Error.cpp">
       <SubType>compile</SubType>
     </Compile>

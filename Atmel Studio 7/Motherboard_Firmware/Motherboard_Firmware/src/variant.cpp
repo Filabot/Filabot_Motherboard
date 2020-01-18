@@ -338,7 +338,9 @@ void serialEvent3() { }
 // IT handlers
 void USART0_Handler(void)
 {
+	
   Serial1.IrqHandler();
+  serialEvent1();
 }
 
 void USART1_Handler(void)
@@ -356,7 +358,7 @@ void USART3_Handler(void)
 void serialEventRun(void)
 {
   if (Serial.available()) serialEvent();
-  if (Serial1.available()) serialEvent1();
+  //if (Serial1.available()) serialEvent1();
   if (Serial2.available()) serialEvent2();
   if (Serial3.available()) serialEvent3();
 }

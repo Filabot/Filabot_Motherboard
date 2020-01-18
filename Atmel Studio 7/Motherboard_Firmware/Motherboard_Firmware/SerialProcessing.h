@@ -23,6 +23,8 @@ class SerialProcessing {
 	void Poll(void);
 	unsigned int CheckSerial(HardwareSerial *port, int portNumber);
 	unsigned int CheckSerial(_SerialNative *port, int portNumber);
+	unsigned int CheckSerial(DmaSerial *port, int portNumber);
+	void CheckDeviceSerial(void);
 	//unsigned int CheckSerial(_SerialNative *port, int portNumber);
 	unsigned int CommandParse(SerialCommand *sCommand, char str[MAX_CMD_LENGTH]);
 	unsigned int SendScreenData(SerialCommand *sCommand);
@@ -60,7 +62,7 @@ bool startsWith(const char *pre, const char *str);
 void PrintRandomRPMData();
 char* strtoke(char *str, const char *delim);
 bool checksumPassed (char *serialChecksum, char *serialStringToCheck);
-
+void startTimer(Tc *tc, uint32_t channel, IRQn_Type irq, uint32_t frequency);
 
 
 

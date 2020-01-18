@@ -31,8 +31,28 @@
 // ***** FreeRTOS  ***** //
 #define INCLUDE_vTaskDelay   1
 #define configUSE_PREEMPTION 1
-#define configKERNEL_INTERRUPT_PRIORITY     0xFF
-#define configMAX_SYSCALL_INTERRUPT_PRIORITY    0x10
+
+#ifdef __NVIC_PRIO_BITS
+/* __BVIC_PRIO_BITS will be specified when CMSIS is being used. */
+#define configPRIO_BITS       				__NVIC_PRIO_BITS
+#else
+#define configPRIO_BITS       				4        /* 15 priority levels */
+#endif
+
+/* The lowest interrupt priority that can be used in a call to a "set priority"
+function. */
+#define configLIBRARY_LOWEST_INTERRUPT_PRIORITY	0x0f
+
+/* The highest interrupt priority that can be used by any interrupt service
+routine that makes calls to interrupt safe FreeRTOS API functions.  DO NOT CALL
+INTERRUPT SAFE FREERTOS API FUNCTIONS FROM ANY INTERRUPT THAT HAS A HIGHER
+PRIORITY THAN THIS! (higher priorities are lower numeric values. */
+#define configLIBRARY_MAX_SYSCALL_INTERRUPT_PRIORITY	10
+
+/* Interrupt priorities used by the kernel port layer itself.  These are generic
+to all Cortex-M ports, and do not rely on any particular library functions. */
+#define configKERNEL_INTERRUPT_PRIORITY 		( configLIBRARY_LOWEST_INTERRUPT_PRIORITY << (8 - configPRIO_BITS) )
+#define configMAX_SYSCALL_INTERRUPT_PRIORITY 	( configLIBRARY_MAX_SYSCALL_INTERRUPT_PRIORITY << (8 - configPRIO_BITS) )
 // Redefine AVR Flash string macro as nop for ARM
 #undef F
 #define F(str) str
@@ -90,7 +110,7 @@ uint32_t SPOOLWEIGHTLIMIT = 0;
 float FILAMENTLENGTH = 0.0;
 float FILAMENTDIAMETER = 0.0;
 volatile bool HANDSHAKE = false;
-
+QueueHandle_t xQueue;
 
 
 // ***** CLASS DECLARATIONs **** //
@@ -109,7 +129,7 @@ Encoder encoder(ENCODER_PINA, ENCODER_PINB);
 
 float pullerRPM = 0;
 int32_t previousEncoderValue = 0;
-unsigned long previousMillis = 834000;
+//unsigned long previousMillis = 834000;
 unsigned int fullUpdateCounter = 0;
 unsigned int traverseDataCounter = 0;
 unsigned int pullerDataCounter = 0;
@@ -124,8 +144,7 @@ int64_t previousFeedrateSampleTime = 0;
 
 void setup()
 {
-
-	
+	xQueue = xQueueCreate(10, MAX_CMD_LENGTH);
 
 	uint32_t RST_status = (RSTC->RSTC_SR & RSTC_SR_RSTTYP_Msk) >> RSTC_SR_RSTTYP_Pos; // Get status from the last Reset
 	uint32_t CORE_status = (SUPC->SUPC_SR); // Get status from the last Core Reset
@@ -151,13 +170,8 @@ void setup()
 	if (RST_status == RSTC_SR_RSTTYP_UserReset)
 	restartReason = "NRST pin detected low";
 	
-
-
-
 	SerialNative.begin(SERIAL_BAUD); //using native serial rather than programming port on DUE
 	SerialNative.setTimeout(1);
-
-	
 
 	ads.begin();
 	ads.setGain(GAIN_ONE);
@@ -165,9 +179,6 @@ void setup()
 	pinMode(ENCODER_PB, INPUT_PULLUP);
 	pinMode(START_PB, INPUT_PULLUP);
 	pinMode(STOP_PB, INPUT_PULLUP);
-
-	
-
 
 	// **** INITS ***** //
 	nvm_operations.init();
@@ -177,15 +188,16 @@ void setup()
 	// **** INITS ***** //
 
 	// ***** Instances ***** //
-	xSemaphore = xSemaphoreCreateMutex();
+	//xSemaphore = xSemaphoreCreateMutex();
+	vSemaphoreCreateBinary(xSemaphore);
 
 	#ifdef TASKCHECKSPC
 	xTaskCreate(
 	TaskCheckSPC
 	,  (const portCHAR *)"CheckSPC"   // A name just for humans
-	,  1000  // This stack size can be checked & adjusted by reading the Stack Highwater
+	,  2000  // This stack size can be checked & adjusted by reading the Stack Highwater
 	,  NULL
-	,   1  // Priority, with 3 (configMAX_PRIORITIES - 1) being the highest, and 0 being the lowest.
+	,   4  // Priority, with 3 (configMAX_PRIORITIES - 1) being the highest, and 0 being the lowest.
 	,  NULL );
 	#endif
 	
@@ -195,7 +207,7 @@ void setup()
 	,  (const portCHAR *)"CheckSerialCommands"   // A name just for humans
 	,  2000  // This stack size can be checked & adjusted by reading the Stack Highwater
 	,  NULL
-	,  2  // Priority, with 3 (configMAX_PRIORITIES - 1) being the highest, and 0 being the lowest.
+	,  3  // Priority, with 3 (configMAX_PRIORITIES - 1) being the highest, and 0 being the lowest.
 	,  NULL );
 	#endif
 
@@ -225,7 +237,7 @@ void setup()
 	,  (const portCHAR *)"CheckEncoder"   // A name just for humans
 	,  500  // This stack size can be checked & adjusted by reading the Stack Highwater
 	,  NULL
-	,  2  // Priority, with 3 (configMAX_PRIORITIES - 1) being the highest, and 0 being the lowest.
+	,  1  // Priority, with 3 (configMAX_PRIORITIES - 1) being the highest, and 0 being the lowest.
 	,  NULL );
 	#endif
 	
@@ -245,7 +257,7 @@ void setup()
 	,  (const portCHAR *)"FilamentCapture"   // A name just for humans
 	,  250  // This stack size can be checked & adjusted by reading the Stack Highwater
 	,  NULL
-	,  2  // Priority, with 3 (configMAX_PRIORITIES - 1) being the highest, and 0 being the lowest.
+	,  3  // Priority, with 3 (configMAX_PRIORITIES - 1) being the highest, and 0 being the lowest.
 	,  NULL );
 	#endif
 
@@ -265,7 +277,7 @@ void setup()
 	,  (const portCHAR *)"TaskHandshake"   // A name just for humans
 	,  250  // This stack size can be checked & adjusted by reading the Stack Highwater
 	,  NULL
-	,  2  // Priority, with 3 (configMAX_PRIORITIES - 1) being the highest, and 0 being the lowest.
+	,  3  // Priority, with 3 (configMAX_PRIORITIES - 1) being the highest, and 0 being the lowest.
 	,  NULL );
 	#endif
 
@@ -288,58 +300,53 @@ void TaskCheckSPC(void *pvParameters)  // This is a task.
 
 	while(1) // A Task shall never return or exit.
 	{
-		if ( xSemaphoreTake( xSemaphore, ( TickType_t ) 10 ) == pdTRUE )
+		if ( xSemaphoreTake( xSemaphore, ( TickType_t ) 1 ) == pdTRUE )
 		{
 			TickType_t xLastWakeTime;
 			xLastWakeTime = xTaskGetTickCount();
-			int32_t waitTime = 25;
-
+			int32_t waitTime = 30;
 			
-			spcProcessing.QueryFailed(250);
+			
 			if (HANDSHAKE)
 			{
+				spcProcessing.QueryFailed(350);
+
 				if (spcProcessing.ISR_READY() && !spcProcessing.HasNewData)
 				{
 					spcProcessing.StartQuery();//enable interrupts and start the bit gathering from spc
 				}
-				
-				if (spcProcessing.HasNewData)
+				else
 				{
+					spcProcessing.RunSPCDataLoop();
 					spcProcessing.HasNewData = false;
-					//SerialUSB.println(spcProcessing.GetDiameter()->charDiameterWithDecimal); //Serial print is broken using long values, use char instead
-					SerialCommand _serialCommand;
-					_serialCommand.hardwareType = hardwareType.indicator;
-					_serialCommand.command = "Diameter";
-					_serialCommand.value = spcProcessing.GetDiameter()->charDiameterWithDecimal;
-					char output[MAX_CMD_LENGTH] = {0};
-					
-					FILAMENTDIAMETER = spcProcessing.GetDiameter()->floatDiameterWithDecimal;
-					BuildSerialOutput(&_serialCommand, output);
-					SerialNative.println(output);
-					
 				}
+
+				
 			}
-			
 			xSemaphoreGive(xSemaphore);
 			vTaskDelayUntil( &xLastWakeTime, waitTime);
+			
 		}
-		
 	}
 
 }
+
+
+
+
 
 void TaskCheckSerialCommands(void *pvParameters)  // This is a task.
 {
 	while(1) // A Task shall never return or exit.
 	{
-		if ( xSemaphoreTake( xSemaphore, ( TickType_t ) 10 ) == pdTRUE )
+		if ( xSemaphoreTake( xSemaphore, ( TickType_t ) 5 ) == pdTRUE )
 		{
 			TickType_t xLastWakeTime;
 			xLastWakeTime = xTaskGetTickCount();
 
 			serialProcessing.Poll();
 			xSemaphoreGive(xSemaphore);
-			vTaskDelayUntil( &xLastWakeTime, 10);
+			vTaskDelayUntil( &xLastWakeTime, 20);
 		}
 	}
 }
@@ -456,7 +463,7 @@ void TaskGetTraverseData(void *pvParameters)  // This is a task.
 			}
 			//vTaskDelay(10);
 			xSemaphoreGive(xSemaphore);
-			vTaskDelayUntil( &xLastWakeTime, 200);
+			vTaskDelayUntil( &xLastWakeTime, 210);
 		}
 
 		
@@ -660,7 +667,7 @@ void TaskFilamentCapture(void *pvParameters)  // This is a task.
 					
 
 					char value[MAX_CMD_LENGTH] = {0};
-					CONVERT_NUMBER_TO_STRING(STRING_FORMAT, serialProcessing.FilamentCapture == true ? "1" : "0", value);
+					CONVERT_NUMBER_TO_STRING(INT_FORMAT, serialProcessing.FilamentCapture == true, value);
 					SerialCommand command = {0};
 					command.command = "FilamentCapture";
 					command.hardwareType = hardwareType.traverse;
@@ -669,8 +676,11 @@ void TaskFilamentCapture(void *pvParameters)  // This is a task.
 					if (!serialProcessing.FullUpdateRequested && command.hardwareType != NULL)
 					{
 						serialProcessing.SendDataToDevice(&command);
+						
+						serialProcessing.SendDataToDevice(&command); // do it twice
+						
 						command.hardwareType = hardwareType.puller;
-						//delay(10);
+						
 						serialProcessing.SendDataToDevice(&command);
 					}
 					previousCaptureState = serialProcessing.FilamentCapture;
@@ -698,16 +708,20 @@ void TaskCalculate(void *pvParameters)  // This is a task.
 			if (serialProcessing.FilamentCapture )
 			{
 				float specificGravity = atof(nvm_operations.GetSpecificGravity());
-				static float filamentWeights[10] = {0};
-				static uint32_t filamentTimes[10] = {0};
+				static float currentFilamentWeight = 0;
+				static float previousWeight = 0;
+				static TickType_t previousTime = 0;
 				static int i = 0;
 				//SPOOLWEIGHT
-				if (FILAMENTLENGTH != previousLength && FILAMENTLENGTH > previousLength )
+				if (FILAMENTLENGTH != previousLength && FILAMENTLENGTH > previousLength || !previousCaptureState )
 				{
 					if (spoolWeight < 0) {spoolWeight = 0.0;}
 					spoolWeight = spoolWeight + (HALF_PI / 2.0) * pow(FILAMENTDIAMETER, 2) * (FILAMENTLENGTH - previousLength) * specificGravity;
-					filamentWeights[i] = spoolWeight;
-					filamentTimes[i++] = millis();
+					if (i == 0)
+					{
+						currentFilamentWeight = spoolWeight;
+					}
+					
 					previousLength = FILAMENTLENGTH;
 					
 					SPOOLWEIGHT = uint32_t(spoolWeight);
@@ -724,17 +738,20 @@ void TaskCalculate(void *pvParameters)  // This is a task.
 						serialProcessing.SendDataToDevice(&command);
 					}
 					
-					previousCaptureState = serialProcessing.FilamentCapture;
+					
 
-					if (i >= 5)
+					++i;
+					if (i >= 5 || !previousCaptureState)
 					{
-						uint32_t timeDelta = filamentTimes[i - 1]- filamentTimes[0];
-						float weightDelta = filamentWeights[i - 1] - filamentWeights[0];
+						int64_t timeDelta = xLastWakeTime - previousTime;//filamentTimes[i - 1]- filamentTimes[0];
+						float weightDelta = currentFilamentWeight - previousWeight;
 						float rate = (60.0 * (60.0 * ((weightDelta) / (float)(timeDelta / 1000.0)))) / 1000.0;
 						i = 0;
 						
+						if (rate < 0.0) {rate = 0.0;}
+
 						value[MAX_CMD_LENGTH] = {0};
-						CONVERT_NUMBER_TO_STRING("%0.3f", abs(rate), value);
+						CONVERT_NUMBER_TO_STRING("%0.3f", rate, value);
 						command = {0};
 						command.command = "OutputRate";
 						command.hardwareType = hardwareType.internal;
@@ -743,7 +760,11 @@ void TaskCalculate(void *pvParameters)  // This is a task.
 						{
 							serialProcessing.SendDataToDevice(&command);
 						}
+						previousTime = xLastWakeTime;
+						previousWeight = currentFilamentWeight;
 					}
+
+					previousCaptureState = serialProcessing.FilamentCapture;
 
 
 				}
@@ -756,6 +777,7 @@ void TaskCalculate(void *pvParameters)  // This is a task.
 				previousLength = 0;
 				FILAMENTLENGTH = 0;
 			}
+			previousCaptureState = serialProcessing.FilamentCapture;
 			
 			xSemaphoreGive(xSemaphore);
 			vTaskDelayUntil( &xLastWakeTime, 200);

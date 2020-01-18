@@ -20,9 +20,9 @@ class SpcProcessing
 	//variables
 	public:
 	bool IsInSimulationMode = false;
-	bool HasNewData = false;
+	volatile bool HasNewData = false;
 	bool HasError(void);
-	bool ISR_READY(void);
+	volatile bool ISR_READY(void);
 	
 	
 
@@ -43,13 +43,10 @@ class SpcProcessing
 	void RunSPCDataLoop(void);
 	void init(void);
 	SpcDiameter *GetDiameter(void);
-	char *GetSerialOutputBuffer(void);
 	Error *GetError(void);
 	void StartQuery(void);
 	void StopQuery(void);
 	bool QueryFailed(int32_t waitTime);
-	int GetLoopCounts(void);
-	
 	
 	protected:
 	
@@ -57,7 +54,6 @@ class SpcProcessing
 	static SpcProcessing *firstinstance;
 	SpcProcessing( const SpcProcessing &c );
 	SpcProcessing& operator=( const SpcProcessing &c );
-	int PrintRandomDiameterData(void);
 	
 	
 }; //spcProcessing
