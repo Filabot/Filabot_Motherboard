@@ -981,6 +981,12 @@
     <Compile Include="NVM_Operations.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="SAM3Timer.cpp">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="SAM3Timer.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="Screen.cpp">
       <SubType>compile</SubType>
     </Compile>

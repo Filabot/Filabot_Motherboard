@@ -25,6 +25,7 @@
 #include <Wire.h>
 #include <Adafruit_ADS1015.h>
 #include "NVM_Operations.h"
+#include "SAM3Timer.h"
 
 // ***** INCLUDES ***** //
 
@@ -141,6 +142,52 @@ float spoolWeight = 0.0;
 int64_t feedRate = 0.0;
 int64_t previousFeedrateSampleTime = 0;
 
+int64_t motorPulsesSent = 0;
+int64_t motorPulsesReceived = 0;
+
+
+void TC3_Handler()
+{
+
+	TC_GetStatus(TC1, 0);
+	
+	static bool state = false;
+
+	if (state)
+	{
+		REG_PIOD_SODR = 0x1 << 5;
+	}
+	else
+	{
+		REG_PIOD_CODR = 0x1 << 5;
+	}
+
+	//if ((motorPulsesSent - motorPulsesReceived) < 10000)
+	//{
+		//motorPulsesSent++;
+		state = !state;
+	//}
+	
+	
+
+}
+
+void MotorPulse_ISR()
+{
+
+	//static int i = 1;
+//
+	//if (i == 0 )
+	//{
+		//motorPulsesReceived++;
+		//i = 1;
+	//}
+	//else
+	//{
+		//i--;
+	//}
+	
+}
 
 void setup()
 {
@@ -172,6 +219,11 @@ void setup()
 	
 	SerialNative.begin(SERIAL_BAUD); //using native serial rather than programming port on DUE
 	SerialNative.setTimeout(1);
+
+	pinMode(15, OUTPUT);
+	pinMode(14, INPUT);
+	SAM3Timer::startTimer(TC1, 0, TC3_IRQn, 0);
+	attachInterrupt(digitalPinToInterrupt(14), MotorPulse_ISR, RISING);
 
 	ads.begin();
 	ads.setGain(GAIN_ONE);

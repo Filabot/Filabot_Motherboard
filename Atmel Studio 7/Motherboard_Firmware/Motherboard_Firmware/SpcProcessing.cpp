@@ -14,6 +14,7 @@
 #include "Error.h"
 #include "Structs.h"
 #include "FreeRTOS_ARM.h"
+#include "SAM3Timer.h"
 
 
 SpcProcessing *SpcProcessing::firstinstance;
@@ -56,7 +57,7 @@ void SpcProcessing::init(void)
 	pinMode(INDICATOR_CLK, INPUT_PULLUP);
 	pinMode(INDICATOR_DAT, INPUT_PULLUP);
 
-	startTimer(TC2, 0, TC6_IRQn, 6000); //TC1 channel 0, the IRQ for that channel and the desired frequency
+	SAM3Timer::startTimer(TC2, 0, TC6_IRQn, 6000); //TC1 channel 0, the IRQ for that channel and the desired frequency
 
 	//attachInterrupt(digitalPinToInterrupt(INDICATOR_CLK), ISR_SPC, FALLING);
 	
@@ -107,20 +108,6 @@ void TC6_Handler()
 		}
 		previousClockPulse = clockPulse;
 	}
-}
-
-void startTimer(Tc *tc, uint32_t channel, IRQn_Type irq, uint32_t frequency) {
-	pmc_set_writeprotect(false);
-	pmc_enable_periph_clk((uint32_t)irq);
-	//TC_Configure(tc, channel, TC_CMR_WAVE | TC_CMR_WAVSEL_UP_RC | TC_CMR_TCCLKS_TIMER_CLOCK4);
-	TC_Configure(tc, channel, TC_CMR_WAVE | TC_CMR_ACPA_SET | TC_CMR_ACPC_CLEAR | TC_CMR_CPCTRG | TC_CMR_TCCLKS_TIMER_CLOCK4);
-	uint32_t rc = VARIANT_MCK/128/frequency; //128 because we selected TIMER_CLOCK4 above
-	TC_SetRA(tc, channel, rc/2); //50% high, 50% low
-	TC_SetRC(tc, channel, rc);
-	TC_Start(tc, channel);
-	tc->TC_CHANNEL[channel].TC_IER=TC_IER_CPCS;
-	tc->TC_CHANNEL[channel].TC_IDR=~TC_IER_CPCS;
-	NVIC_EnableIRQ(irq);
 }
 
 void ISR_SPC()
@@ -176,156 +163,158 @@ void ISR_SPC()
 
 void SpcProcessing::RunSPCDataLoop(void)
 {
-	
-	
-	
 	BaseType_t xTaskWokenByReceive = pdFALSE;
 	if (!SPC_ISR_LOCK ) //check for locked ISR
 	{
 		//Serial.println(rawSPC);
-		xQueueReceiveFromISR(xQueue, (void *) &rawSPC, &xTaskWokenByReceive);
-
-		for (int i = 0; i < 52; ++i)
-		{
-			if (rawSPC_ISR[i] == 0) //no positions can be 0's
-			{
-				return;
-			}
-		}
-		if (dataInvalid)
-		{
-			dataInvalid = false;
-			return;
-		}
 		
 
-		if (rawSPC[0] == 0){ //if position 0 in array equals null then skip
-			//Serial.println("RESETTING FROM NO DATA");
-			//digitalWrite(INDICATOR_REQ, HIGH);
-			//PORTC |= digitalPinToBitMask(INDICATOR_REQ); //set req high to restart ISR
-			return;
-		}
-
-		
-
-		bool dataStreamValid = false; //set dataStreamValid false since this is the start of the verification process
-		for (unsigned int i = 0; i < 12; i++) //first 12 indices should be 1's (49), if not then the data isn't valid
+		while (xQueueReceiveFromISR(xQueue, (void *) &rawSPC, &xTaskWokenByReceive));
 		{
-			if (rawSPC[i] == 48) // || rawSPC_ISR[16] == 49) //48 is 0 (zero) in ascii 0-12 cannot be 0, and 13 cannot be 1
-			{
-				dataStreamValid = false;
-				
-				SerialCommand sError;
-				sError.hardwareType = hardwareType.indicator;
-				sError.command = "DiameterError";
-				sError.value = "SPC Datastream Validation Error";
-				
-				//eError.hardwareType = hardwareType.indicator;
-				//eError.errorLevel = errorLevel.datastream_validation_failed;
-				//eError.errorCode = errorCode.spc_data_error;
-				//AddError(&eError);
 
-				char sErrorOutput [MAX_CMD_LENGTH] = {0};
-				BuildSerialOutput(&sError, sErrorOutput);
-				SerialNative.println(sErrorOutput);
-				
-				ISR_LOOP_COUNTER = 0;
-				return;
-
-			}
-			else
+			for (int i = 0; i < 52; ++i)
 			{
-				dataStreamValid = true;
-			}
-		}
-
-		if (dataStreamValid)
-		{
-			byte bytes[13] = {0};
-			for (int i = 0; i < 13; i++)
-			{
-				int idx = (i*4) + 4;
-				int bitPointer = 0;
-				for (int j = i * 4; j < idx ; j++)
+				if (rawSPC_ISR[i] == 0) //no positions can be 0's
 				{
-					bitWrite(bytes[i], bitPointer, rawSPC[j] == 49); //49 ascii for 1 //grab nibbles from rawSPC
-					bitPointer++;
+					return;
 				}
 			}
-			if (bytes[11] > 4)
+			if (dataInvalid)
 			{
-
-				dataStreamValid = false; //invalid data
+				dataInvalid = false;
 				return;
 			}
 			
-			float preDecimalNumber = 0.0;
-			char buf[7] = {0};
-			
-			for(int i=0;i<6;i++){ //grab array positions 5-10 for diameter numbers
-				
-				buf[i]=bytes[i+5]+'0';
-				
-				buf[6]=0;
-				
-				preDecimalNumber=atol(buf); //assembled measurement, no decimal place added
-			}
-			
-			int decimalPointLocation = bytes[11];
-			
-			SPCDiameter = preDecimalNumber / (pow(10, decimalPointLocation)); //add decimal to number
-			
-			spcDiameter.decimalPointLocation = decimalPointLocation;
-			spcDiameter.intDiameterNoDecimal = preDecimalNumber;
-			spcDiameter.floatDiameterWithDecimal = SPCDiameter;
-			itoa(preDecimalNumber, spcDiameter.charDiameterNoDecimal, 10);
-			
-			
-			char decimalNumber[20] = {0};
-			CONVERT_FLOAT_TO_STRING(SPCDiameter, decimalNumber);
-			CONVERT_FLOAT_TO_STRING(SPCDiameter, spcDiameter.charDiameterWithDecimal);
 
-			static int numberOfZeros = 0;
-			if (spcDiameter.charDiameterWithDecimal[2] == 48 && spcDiameter.charDiameterWithDecimal[0] == 48 )
-			{
-				numberOfZeros++;
-			}
-			else
-			{
-				numberOfZeros = 0;
-			}
-			if (numberOfZeros >= 2)
-			{
-				numberOfZeros = 0;
-			}
-			if (numberOfZeros == 1)
-			{
-				previousQuery = xTaskGetTickCount();
+			if (rawSPC[0] == 0){ //if position 0 in array equals null then skip
+				//Serial.println("RESETTING FROM NO DATA");
+				//digitalWrite(INDICATOR_REQ, HIGH);
+				//PORTC |= digitalPinToBitMask(INDICATOR_REQ); //set req high to restart ISR
 				return;
 			}
 
-			SerialCommand _serialCommand;
-			_serialCommand.hardwareType = hardwareType.internal;
-			_serialCommand.command = "Diameter";
-			_serialCommand.value = spcDiameter.charDiameterWithDecimal;
-			char output[MAX_CMD_LENGTH] = {0};
 			
-			FILAMENTDIAMETER = spcDiameter.floatDiameterWithDecimal;
-			serialProcessing1.SendDataToDevice(&_serialCommand);
 
-			_serialCommand.hardwareType = hardwareType.internal;
-			_serialCommand.command = "testTime";
-			itoa(isrTime, _serialCommand.value, 10);
-			if (isrTime > 100000)
-			serialProcessing1.SendDataToDevice(&_serialCommand);
-
-			for (int i = 0; i < 52; i++) //clean up array for next go around, cannot use memset since rawSPC is volatile
+			bool dataStreamValid = false; //set dataStreamValid false since this is the start of the verification process
+			for (unsigned int i = 0; i < 12; i++) //first 12 indices should be 1's (49), if not then the data isn't valid
 			{
-				rawSPC[i] = 0;
+				if (rawSPC[i] == 48) // || rawSPC_ISR[16] == 49) //48 is 0 (zero) in ascii 0-12 cannot be 0, and 13 cannot be 1
+				{
+					dataStreamValid = false;
+					
+					SerialCommand sError;
+					sError.hardwareType = hardwareType.indicator;
+					sError.command = "DiameterError";
+					sError.value = "SPC Datastream Validation Error";
+					
+					//eError.hardwareType = hardwareType.indicator;
+					//eError.errorLevel = errorLevel.datastream_validation_failed;
+					//eError.errorCode = errorCode.spc_data_error;
+					//AddError(&eError);
+
+					char sErrorOutput [MAX_CMD_LENGTH] = {0};
+					BuildSerialOutput(&sError, sErrorOutput);
+					SerialNative.println(sErrorOutput);
+					
+					ISR_LOOP_COUNTER = 0;
+					return;
+
+				}
+				else
+				{
+					dataStreamValid = true;
+				}
 			}
-			
-			MAIN_LOOP_COUNTER = 0;
-			ISR_LOOP_COUNTER = 0;
+
+			if (dataStreamValid)
+			{
+				byte bytes[13] = {0};
+				for (int i = 0; i < 13; i++)
+				{
+					int idx = (i*4) + 4;
+					int bitPointer = 0;
+					for (int j = i * 4; j < idx ; j++)
+					{
+						bitWrite(bytes[i], bitPointer, rawSPC[j] == 49); //49 ascii for 1 //grab nibbles from rawSPC
+						bitPointer++;
+					}
+				}
+				if (bytes[11] > 4)
+				{
+
+					dataStreamValid = false; //invalid data
+					return;
+				}
+				
+				float preDecimalNumber = 0.0;
+				char buf[7] = {0};
+				
+				for(int i=0;i<6;i++){ //grab array positions 5-10 for diameter numbers
+					
+					buf[i]=bytes[i+5]+'0';
+					
+					buf[6]=0;
+					
+					preDecimalNumber=atol(buf); //assembled measurement, no decimal place added
+				}
+				
+				int decimalPointLocation = bytes[11];
+				
+				SPCDiameter = preDecimalNumber / (pow(10, decimalPointLocation)); //add decimal to number
+				
+				spcDiameter.decimalPointLocation = decimalPointLocation;
+				spcDiameter.intDiameterNoDecimal = preDecimalNumber;
+				spcDiameter.floatDiameterWithDecimal = SPCDiameter;
+				itoa(preDecimalNumber, spcDiameter.charDiameterNoDecimal, 10);
+				
+				
+				char decimalNumber[20] = {0};
+				CONVERT_FLOAT_TO_STRING(SPCDiameter, decimalNumber);
+				CONVERT_FLOAT_TO_STRING(SPCDiameter, spcDiameter.charDiameterWithDecimal);
+
+				static int numberOfZeros = 0;
+				if (spcDiameter.charDiameterWithDecimal[2] == 48 && spcDiameter.charDiameterWithDecimal[0] == 48 )
+				{
+					numberOfZeros++;
+				}
+				else
+				{
+					numberOfZeros = 0;
+				}
+				if (numberOfZeros >= 2)
+				{
+					numberOfZeros = 0;
+				}
+				if (numberOfZeros == 1)
+				{
+					previousQuery = xTaskGetTickCount();
+					return;
+				}
+
+				SerialCommand _serialCommand;
+				_serialCommand.hardwareType = hardwareType.internal;
+				_serialCommand.command = "Diameter";
+				_serialCommand.value = spcDiameter.charDiameterWithDecimal;
+				char output[MAX_CMD_LENGTH] = {0};
+				
+				FILAMENTDIAMETER = spcDiameter.floatDiameterWithDecimal;
+				serialProcessing1.SendDataToDevice(&_serialCommand);
+
+				_serialCommand.hardwareType = hardwareType.internal;
+				_serialCommand.command = "testTime";
+				itoa(isrTime, _serialCommand.value, 10);
+				if (isrTime > 100000)
+				serialProcessing1.SendDataToDevice(&_serialCommand);
+
+				for (int i = 0; i < 52; i++) //clean up array for next go around, cannot use memset since rawSPC is volatile
+				{
+					rawSPC[i] = 0;
+				}
+				
+				MAIN_LOOP_COUNTER = 0;
+				ISR_LOOP_COUNTER = 0;
+
+			}
 			
 			//HasNewData = true;
 			if( xTaskWokenByReceive != pdFALSE )
@@ -347,29 +336,29 @@ SpcDiameter *SpcProcessing::GetDiameter(void){
 bool SpcProcessing::QueryFailed(int32_t waitTime)
 {
 	
-		static bool firstRun = true;
+	static bool firstRun = true;
 
-		if (firstRun)
-		{
-			previousQuery = xTaskGetTickCount();
-			firstRun = false;
-		}
-		if (xTaskGetTickCount() >= previousQuery + (waitTime)) //100 milliseconds //if previous query didn't finish in time it is dead
-		{
-			SerialCommand command;
-			command.hardwareType = hardwareType.indicator;
-			command.command = "DiameterError";
-			command.value = "SPC Failed to Acquire Data";
+	if (firstRun)
+	{
+		previousQuery = xTaskGetTickCount();
+		firstRun = false;
+	}
+	if (xTaskGetTickCount() >= previousQuery + (waitTime)) //100 milliseconds //if previous query didn't finish in time it is dead
+	{
+		SerialCommand command;
+		command.hardwareType = hardwareType.indicator;
+		command.command = "DiameterError";
+		command.value = "SPC Failed to Acquire Data";
 
-			char buffer[MAX_CMD_LENGTH] = {0};
-			BuildSerialOutput(&command, buffer);
+		char buffer[MAX_CMD_LENGTH] = {0};
+		BuildSerialOutput(&command, buffer);
 
-			SerialNative.println(buffer);
+		SerialNative.println(buffer);
 
-			previousQuery = xTaskGetTickCount();
-			
-			return true;
-		}
+		previousQuery = xTaskGetTickCount();
+		
+		return true;
+	}
 	
 	return false;
 }

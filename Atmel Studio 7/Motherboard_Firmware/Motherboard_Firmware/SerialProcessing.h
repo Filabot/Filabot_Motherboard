@@ -62,7 +62,6 @@ bool startsWith(const char *pre, const char *str);
 void PrintRandomRPMData();
 char* strtoke(char *str, const char *delim);
 bool checksumPassed (char *serialChecksum, char *serialStringToCheck);
-void startTimer(Tc *tc, uint32_t channel, IRQn_Type irq, uint32_t frequency);
 
 
 

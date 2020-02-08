@@ -10,6 +10,7 @@
 #include "NVM_Operations.h"
 #include "FreeRTOS_ARM.h"
 #include "Vector.h"
+#include "SAM3Timer.h"
 
 
 template<size_t SIZE, class T> inline size_t array_size(T (&arr)[SIZE]);
@@ -129,7 +130,7 @@ unsigned int SerialProcessing::CheckSerial(_SerialNative *port, int portNumber)
 		else //if data comes from expander
 		{
 			SendToPC(&sCommand);
-			SendScreenData(&sCommand);
+			//SendScreenData(&sCommand);
 		}
 		
 	}
@@ -321,6 +322,25 @@ unsigned int SerialProcessing::ProcessDataFromPC(SerialCommand *sCommand)
 {
 	//int cmp = strcmp(sCommand->command, "GetFullUpdate");
 
+	if (strcmp(sCommand->command, "velocity") == 0)
+	{
+		float rpm = atof(sCommand->value);
+		if (rpm > 300.0)
+		{
+			rpm = 300.0;
+			sCommand->value = "300.0";
+		}
+		if (rpm < 0.0)
+		{
+			rpm = 0.0;
+			sCommand->value = "0.0";
+		}
+		
+		int32_t freq = (((rpm * (16.0 * 200.0) ) / 60.0) * 1.851) * 2.0;
+		SAM3Timer::changeTimerFrequency(TC1, 0, TC3_IRQn, freq);
+		
+	}
+
 	
 	if(sCommand->hardwareType == hardwareType.internal)
 	{
@@ -379,7 +399,7 @@ unsigned int SerialProcessing::SendScreenData(SerialCommand *sCommand)
 		_sCommand.command = sCommand->command;
 		char serialOutputBuffer[MAX_CMD_LENGTH] = {0};
 		BuildSerialOutput(&_sCommand, serialOutputBuffer);
-		Serial3.println(serialOutputBuffer);
+		//Serial3.println(serialOutputBuffer);
 		//SerialUSB.println(serialOutputBuffer); //Serial print is broken using long values, use char instead
 
 	}
@@ -425,6 +445,8 @@ void SerialProcessing::CheckInteralCommands(SerialCommand *sCommand)
 	{
 		SIMULATIONACTIVE = strcmp(sCommand->value, "true") == 0;
 	}
+
+	
 	
 
 }
