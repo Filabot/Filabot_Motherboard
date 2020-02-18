@@ -22,11 +22,6 @@ void _SerialNative::setTimeout(unsigned long timeout)
 
 void _SerialNative::print(const char *c, ...)
 {
-	if (!dtr()){
-	return;
-	}
-
-
 	int ret=0;
 	char vastr[MAX_CMD_LENGTH]={0};
 	
@@ -44,10 +39,6 @@ void _SerialNative::print(const char *c, ...)
 
 void _SerialNative::print(char *c, ...)
 {
-	if (!dtr()){
-		return;
-	}
-	
 	int ret=0;
 	char vastr[MAX_CMD_LENGTH]={0};
 	
@@ -65,11 +56,6 @@ void _SerialNative::print(char *c, ...)
 
 void _SerialNative::println(const char *c, ...)
 {
-	if (!dtr()){
-		return;
-	}
-	
-
 	int ret=0;
 	char vastr[MAX_CMD_LENGTH]={0};
 	
@@ -95,10 +81,6 @@ void _SerialNative::println(const char *c, ...)
 
 void _SerialNative::println(char *c, ...)
 {
-	if (!dtr()){
-	return;
-	}
-
 	int ret=0;
 	char vastr[MAX_CMD_LENGTH]={0};
 	
@@ -117,42 +99,25 @@ void _SerialNative::println(char *c, ...)
 
 void _SerialNative::print(int num)
 {
-	if (!dtr()){
-		return;
-	}
-
 	if (SerialUSB){SerialUSB.print(num);}
 }
 
 void _SerialNative::println(int num)
 {
-	if (!dtr()){
-		return;
-	}
-
 	if (SerialUSB){SerialUSB.println(num);}
 }
 
 size_t _SerialNative::readBytesUntil(char terminator, uint8_t *buffer, size_t length)
 {
-	if (!dtr()){
-		return 0;
-	}
 	if (SerialUSB){ return readBytesUntil(terminator, (char *)buffer, length);}
 }
 
 size_t _SerialNative::readBytesUntil( char terminator, char *buffer, size_t length)
 {
-	if (!dtr()){
-		return 0;
-	}
 	if (SerialUSB){ return SerialUSB.readBytesUntil(terminator, buffer, length);}
 }
 int _SerialNative::read()
 {
-	if (!dtr()){
-		return 0;
-	}
 	if(SerialUSB) {return SerialUSB.read();}
 }
 

@@ -219,12 +219,8 @@ uint32_t UDD_Send(uint32_t ep, const void* data, uint32_t len)
 
 	volatile uint32_t TimeOut = 0;
 
-	while( UOTGHS_DEVEPTISR_TXINI != (UOTGHS->UOTGHS_DEVEPTISR[ep] & UOTGHS_DEVEPTISR_TXINI )) 
-	{
-		TimeOut++;
-		if ((TimeOut >= 200) || !(PIOB->PIO_PDSR & PIO_PDSR_P10)) break; //avoids spin lock
-	}
-	TimeOut=0;
+	while( UOTGHS_DEVEPTISR_TXINI != (UOTGHS->UOTGHS_DEVEPTISR[ep] & UOTGHS_DEVEPTISR_TXINI )) {}
+	
 	
 	if (ep == EP0)
 	{

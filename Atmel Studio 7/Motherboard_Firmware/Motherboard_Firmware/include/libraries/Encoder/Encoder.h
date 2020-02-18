@@ -92,7 +92,8 @@ public:
 		// allow time for a passive R-C filter to charge
 		// through the pullup resistors, before reading
 		// the initial state
-		delayMicroseconds(2000);
+		//delayMicroseconds(2000);
+		delay(2);
 		uint8_t s = 0;
 		if (DIRECT_PIN_READ(encoder.pin1_register, encoder.pin1_bitmask)) s |= 1;
 		if (DIRECT_PIN_READ(encoder.pin2_register, encoder.pin2_bitmask)) s |= 2;

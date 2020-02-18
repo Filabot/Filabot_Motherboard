@@ -7,7 +7,6 @@
 #include "Structs.h"
 #include "NVM_Operations.h"
 #include "DmaSerial.h"
-#include "FreeRTOS_ARM.h"
 
 #define SERIAL_BAUD (115200) //baud rate for the serial ports
 
@@ -36,8 +35,7 @@ extern uint32_t SPOOLWEIGHTLIMIT;
 extern float FILAMENTLENGTH;
 extern float FILAMENTDIAMETER;
 extern volatile bool HANDSHAKE;
-extern QueueHandle_t xQueue;
-
+extern int32_t KEEPALIVETIMER;
 extern NVM_Operations nvm_operations;
 //
 //#define GPIO_LOW(pin) {PORT->Group[g_APinDescription[(pin)].pPort].OUTCLR.reg = (1ul << g_APinDescription[(pin)].ulPin);}

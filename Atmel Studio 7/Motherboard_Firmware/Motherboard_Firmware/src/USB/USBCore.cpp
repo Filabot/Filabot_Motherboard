@@ -154,9 +154,12 @@ uint32_t USBD_Recv(uint32_t ep, void* d, uint32_t len)
 	return -1;
 
 	LockEP lock(ep);
-	len = min(UDD_FifoByteCount(ep & 0xF),len);
+	uint32_t n = UDD_FifoByteCount(ep & 0xF);
+	len = min(n,len);
+	n = len;
 	uint8_t* dst = (uint8_t*)d;
-	UDD_Recv(ep & 0xF, dst, len);
+	while (n--)
+	*dst++ = UDD_Recv8(ep & 0xF);
 	if (len && !UDD_FifoByteCount(ep & 0xF)) // release empty buffer
 	UDD_ReleaseRX(ep & 0xF);
 
@@ -207,7 +210,13 @@ uint32_t USBD_Send(uint32_t ep, const void* d, uint32_t len)
 		if (n > len)
 		n = len;
 		len -= n;
-
+		//USB PATCH to avoid dead loop
+		int count=0;
+		while( UOTGHS_DEVEPTISR_TXINI != (UOTGHS->UOTGHS_DEVEPTISR[ep & 0xF] & UOTGHS_DEVEPTISR_TXINI ))
+		{
+			count++;
+			if (count>10000) return len;
+		}
 		UDD_Send(ep & 0xF, data, n);
 		data += n;
 	}

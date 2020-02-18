@@ -94,299 +94,301 @@
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
     <ToolchainSettings>
       <ArmGccCpp>
-        <armgcc.common.outputfiles.hex>True</armgcc.common.outputfiles.hex>
-        <armgcc.common.outputfiles.lss>True</armgcc.common.outputfiles.lss>
-        <armgcc.common.outputfiles.eep>True</armgcc.common.outputfiles.eep>
-        <armgcc.common.outputfiles.bin>True</armgcc.common.outputfiles.bin>
-        <armgcc.common.outputfiles.srec>True</armgcc.common.outputfiles.srec>
-        <armgcc.compiler.symbols.DefSymbols>
-          <ListValues>
-            <Value>NDEBUG</Value>
-            <Value>F_CPU=84000000L</Value>
-            <Value>ARDUINO=</Value>
-            <Value>ARDUINO_SAM_DUE</Value>
-            <Value>ARDUINO_ARCH_SAM</Value>
-            <Value>USB_VID=0x2341</Value>
-            <Value>USB_PID=0x003e</Value>
-            <Value>USB_PRODUCT="\"Arduino Due\""</Value>
-            <Value>USB_MANUFACTURER="\"Arduino LLC\""</Value>
-            <Value>USBCON</Value>
-          </ListValues>
-        </armgcc.compiler.symbols.DefSymbols>
-        <armgcc.compiler.directories.IncludePaths>
-          <ListValues>
-            <Value>%24(PackRepoDir)\arm\cmsis\5.0.1\CMSIS\Include\</Value>
-            <Value>%24(ProjectDir)\include</Value>
-            <Value>%24(ProjectDir)\include\core</Value>
-            <Value>%24(ProjectDir)\include\core\avr</Value>
-            <Value>%24(ProjectDir)\include\core\USB</Value>
-            <Value>%24(ProjectDir)\include\libraries\FreeRTOS_ARM</Value>
-            <Value>%24(ProjectDir)\include\libraries\ili9341_due</Value>
-            <Value>%24(ProjectDir)\include\libraries\SPI</Value>
-            <Value>%24(ProjectDir)\include\libraries\Vector</Value>
-            <Value>%24(ProjectDir)\include\libraries\FreeRTOS_ARM\utility</Value>
-            <Value>%24(ProjectDir)\include\libraries\ili9341_due\fonts</Value>
-            <Value>%24(ProjectDir)\include\libraries\Vector\Vector</Value>
-            <Value>../src/ASF/common/utils/interrupt</Value>
-            <Value>../src/ASF/common/utils</Value>
-            <Value>../src/ASF/sam/utils/cmsis/sam3x/source/templates/gcc</Value>
-            <Value>../src/ASF/sam/utils/cmsis/sam3x/source/templates</Value>
-            <Value>..\include\libraries\FreeRTOS_ARM\org_files</Value>
-            <Value>..\include\libraries\FreeRTOS_ARM\src</Value>
-            <Value>..\include\libraries\FreeRTOS_ARM\src\utility</Value>
-            <Value>..\include\libraries\SPI\src</Value>
-            <Value>..\include\libraries\Encoder</Value>
-            <Value>..\include\libraries\Encoder\utility</Value>
-            <Value>..\include\libraries\Adafruit_ADS1X15</Value>
-            <Value>..\include\libraries\Wire</Value>
-            <Value>..\include\libraries\Wire\src</Value>
-            <Value>..\include\libraries\DueFlashStorage\src</Value>
-          </ListValues>
-        </armgcc.compiler.directories.IncludePaths>
-        <armgcc.compiler.optimization.level>Optimize for size (-Os)</armgcc.compiler.optimization.level>
-        <armgcc.compiler.optimization.OtherFlags>-fno-threadsafe-statics -fno-exceptions</armgcc.compiler.optimization.OtherFlags>
-        <armgcc.compiler.optimization.PrepareFunctionsForGarbageCollection>True</armgcc.compiler.optimization.PrepareFunctionsForGarbageCollection>
-        <armgcc.compiler.optimization.PrepareDataForGarbageCollection>True</armgcc.compiler.optimization.PrepareDataForGarbageCollection>
-        <armgcc.compiler.optimization.EnableLongCalls>False</armgcc.compiler.optimization.EnableLongCalls>
-        <armgcc.compiler.optimization.DebugLevel>Maximum (-g3)</armgcc.compiler.optimization.DebugLevel>
-        <armgcc.compiler.warnings.InhibitAllWarnings>True</armgcc.compiler.warnings.InhibitAllWarnings>
-        <armgcc.compiler.miscellaneous.OtherFlags>-std=gnu11 --param max-inline-insns-single=500 -nostdlib</armgcc.compiler.miscellaneous.OtherFlags>
-        <armgcccpp.compiler.symbols.DefSymbols>
-          <ListValues>
-            <Value>NDEBUG</Value>
-            <Value>F_CPU=84000000L</Value>
-            <Value>ARDUINO=</Value>
-            <Value>ARDUINO_SAM_DUE</Value>
-            <Value>ARDUINO_ARCH_SAM</Value>
-            <Value>USB_VID=0x2341</Value>
-            <Value>USB_PID=0x003e</Value>
-            <Value>USB_PRODUCT="\"Arduino Due\""</Value>
-            <Value>USB_MANUFACTURER="\"Arduino LLC\""</Value>
-            <Value>USBCON</Value>
-          </ListValues>
-        </armgcccpp.compiler.symbols.DefSymbols>
-        <armgcccpp.compiler.directories.IncludePaths>
-          <ListValues>
-            <Value>%24(PackRepoDir)\arm\cmsis\5.0.1\CMSIS\Include\</Value>
-            <Value>%24(ProjectDir)\include</Value>
-            <Value>%24(ProjectDir)\include\core</Value>
-            <Value>%24(ProjectDir)\include\core\avr</Value>
-            <Value>%24(ProjectDir)\include\core\USB</Value>
-            <Value>%24(ProjectDir)\include\libraries\FreeRTOS_ARM</Value>
-            <Value>%24(ProjectDir)\include\libraries\ili9341_due</Value>
-            <Value>%24(ProjectDir)\include\libraries\SPI</Value>
-            <Value>%24(ProjectDir)\include\libraries\Vector</Value>
-            <Value>%24(ProjectDir)\include\libraries\FreeRTOS_ARM\utility</Value>
-            <Value>%24(ProjectDir)\include\libraries\ili9341_due\fonts</Value>
-            <Value>%24(ProjectDir)\include\libraries\Vector\Vector</Value>
-            <Value>../src/ASF/common/utils/interrupt</Value>
-            <Value>../src/ASF/common/utils</Value>
-            <Value>../src/ASF/sam/utils/cmsis/sam3x/source/templates/gcc</Value>
-            <Value>../src/ASF/sam/utils/cmsis/sam3x/source/templates</Value>
-            <Value>..\include\libraries\FreeRTOS_ARM\org_files</Value>
-            <Value>..\include\libraries\FreeRTOS_ARM\src</Value>
-            <Value>..\include\libraries\FreeRTOS_ARM\src\utility</Value>
-            <Value>..\include\libraries\SPI\src</Value>
-            <Value>..\include\libraries\Encoder</Value>
-            <Value>..\include\libraries\Encoder\utility</Value>
-            <Value>..\include\libraries\Adafruit_ADS1X15</Value>
-            <Value>..\include\libraries\Wire</Value>
-            <Value>..\include\libraries\Wire\src</Value>
-            <Value>..\include\libraries\DueFlashStorage\src</Value>
-          </ListValues>
-        </armgcccpp.compiler.directories.IncludePaths>
-        <armgcccpp.compiler.optimization.level>Optimize for size (-Os)</armgcccpp.compiler.optimization.level>
-        <armgcccpp.compiler.optimization.OtherFlags>-fno-threadsafe-statics -fno-exceptions</armgcccpp.compiler.optimization.OtherFlags>
-        <armgcccpp.compiler.optimization.PrepareFunctionsForGarbageCollection>True</armgcccpp.compiler.optimization.PrepareFunctionsForGarbageCollection>
-        <armgcccpp.compiler.optimization.PrepareDataForGarbageCollection>True</armgcccpp.compiler.optimization.PrepareDataForGarbageCollection>
-        <armgcccpp.compiler.optimization.EnableLongCalls>False</armgcccpp.compiler.optimization.EnableLongCalls>
-        <armgcccpp.compiler.optimization.DebugLevel>Maximum (-g3)</armgcccpp.compiler.optimization.DebugLevel>
-        <armgcccpp.compiler.warnings.InhibitAllWarnings>True</armgcccpp.compiler.warnings.InhibitAllWarnings>
-        <armgcccpp.compiler.miscellaneous.OtherFlags>-std=gnu++11 --param max-inline-insns-single=500 -nostdlib</armgcccpp.compiler.miscellaneous.OtherFlags>
-        <armgcccpp.linker.general.UseNewlibNano>True</armgcccpp.linker.general.UseNewlibNano>
-        <armgcccpp.linker.general.AdditionalSpecs>Use syscall stubs (--specs=nosys.specs)</armgcccpp.linker.general.AdditionalSpecs>
-        <armgcccpp.linker.libraries.Libraries>
-          <ListValues>
-            <Value>libm</Value>
-          </ListValues>
-        </armgcccpp.linker.libraries.Libraries>
-        <armgcccpp.linker.libraries.LibrarySearchPaths>
-          <ListValues>
-            <Value>..\linker_scripts\linker_scripts\gcc</Value>
-          </ListValues>
-        </armgcccpp.linker.libraries.LibrarySearchPaths>
-        <armgcccpp.linker.optimization.GarbageCollectUnusedSections>True</armgcccpp.linker.optimization.GarbageCollectUnusedSections>
-        <armgcccpp.linker.miscellaneous.LinkerFlags>-Tflash_without_bootloader.ld -Wl,--cref -Os -Wl,--check-sections -Wl,--unresolved-symbols=report-all -Wl,--warn-common -Wl,--warn-section-align</armgcccpp.linker.miscellaneous.LinkerFlags>
-        <armgcccpp.assembler.general.IncludePaths>
-          <ListValues>
-            <Value>%24(PackRepoDir)\arm\cmsis\5.0.1\CMSIS\Include\</Value>
-          </ListValues>
-        </armgcccpp.assembler.general.IncludePaths>
-        <armgcccpp.assembler.debugging.DebugLevel>Default (-Wa,-g)</armgcccpp.assembler.debugging.DebugLevel>
-        <armgcccpp.preprocessingassembler.general.IncludePaths>
-          <ListValues>
-            <Value>%24(PackRepoDir)\arm\cmsis\5.0.1\CMSIS\Include\</Value>
-          </ListValues>
-        </armgcccpp.preprocessingassembler.general.IncludePaths>
-      </ArmGccCpp>
+  <armgcc.common.outputfiles.hex>True</armgcc.common.outputfiles.hex>
+  <armgcc.common.outputfiles.lss>True</armgcc.common.outputfiles.lss>
+  <armgcc.common.outputfiles.eep>True</armgcc.common.outputfiles.eep>
+  <armgcc.common.outputfiles.bin>True</armgcc.common.outputfiles.bin>
+  <armgcc.common.outputfiles.srec>True</armgcc.common.outputfiles.srec>
+  <armgcc.compiler.symbols.DefSymbols>
+    <ListValues>
+      <Value>NDEBUG</Value>
+      <Value>F_CPU=84000000L</Value>
+      <Value>ARDUINO=</Value>
+      <Value>ARDUINO_SAM_DUE</Value>
+      <Value>ARDUINO_ARCH_SAM</Value>
+      <Value>USB_VID=0x2341</Value>
+      <Value>USB_PID=0x003e</Value>
+      <Value>USB_PRODUCT="\"Arduino Due\""</Value>
+      <Value>USB_MANUFACTURER="\"Arduino LLC\""</Value>
+      <Value>USBCON</Value>
+    </ListValues>
+  </armgcc.compiler.symbols.DefSymbols>
+  <armgcc.compiler.directories.IncludePaths>
+    <ListValues>
+      <Value>%24(PackRepoDir)\arm\cmsis\5.0.1\CMSIS\Include\</Value>
+      <Value>%24(ProjectDir)\include</Value>
+      <Value>%24(ProjectDir)\include\core</Value>
+      <Value>%24(ProjectDir)\include\core\avr</Value>
+      <Value>%24(ProjectDir)\include\core\USB</Value>
+      <Value>%24(ProjectDir)\include\libraries\FreeRTOS_ARM</Value>
+      <Value>%24(ProjectDir)\include\libraries\ili9341_due</Value>
+      <Value>%24(ProjectDir)\include\libraries\SPI</Value>
+      <Value>%24(ProjectDir)\include\libraries\Vector</Value>
+      <Value>%24(ProjectDir)\include\libraries\FreeRTOS_ARM\utility</Value>
+      <Value>%24(ProjectDir)\include\libraries\ili9341_due\fonts</Value>
+      <Value>%24(ProjectDir)\include\libraries\Vector\Vector</Value>
+      <Value>../src/ASF/common/utils/interrupt</Value>
+      <Value>../src/ASF/common/utils</Value>
+      <Value>../src/ASF/sam/utils/cmsis/sam3x/source/templates/gcc</Value>
+      <Value>../src/ASF/sam/utils/cmsis/sam3x/source/templates</Value>
+      <Value>..\include\libraries\FreeRTOS_ARM\org_files</Value>
+      <Value>..\include\libraries\FreeRTOS_ARM\src</Value>
+      <Value>..\include\libraries\FreeRTOS_ARM\src\utility</Value>
+      <Value>..\include\libraries\SPI\src</Value>
+      <Value>..\include\libraries\Encoder</Value>
+      <Value>..\include\libraries\Encoder\utility</Value>
+      <Value>..\include\libraries\Adafruit_ADS1X15</Value>
+      <Value>..\include\libraries\Wire</Value>
+      <Value>..\include\libraries\Wire\src</Value>
+      <Value>..\include\libraries\DueFlashStorage\src</Value>
+    </ListValues>
+  </armgcc.compiler.directories.IncludePaths>
+  <armgcc.compiler.optimization.level>Optimize for size (-Os)</armgcc.compiler.optimization.level>
+  <armgcc.compiler.optimization.OtherFlags>-fno-threadsafe-statics -fno-exceptions</armgcc.compiler.optimization.OtherFlags>
+  <armgcc.compiler.optimization.PrepareFunctionsForGarbageCollection>True</armgcc.compiler.optimization.PrepareFunctionsForGarbageCollection>
+  <armgcc.compiler.optimization.PrepareDataForGarbageCollection>True</armgcc.compiler.optimization.PrepareDataForGarbageCollection>
+  <armgcc.compiler.optimization.EnableLongCalls>False</armgcc.compiler.optimization.EnableLongCalls>
+  <armgcc.compiler.optimization.DebugLevel>Maximum (-g3)</armgcc.compiler.optimization.DebugLevel>
+  <armgcc.compiler.warnings.InhibitAllWarnings>True</armgcc.compiler.warnings.InhibitAllWarnings>
+  <armgcc.compiler.miscellaneous.OtherFlags>-std=gnu11 --param max-inline-insns-single=500 -nostdlib</armgcc.compiler.miscellaneous.OtherFlags>
+  <armgcccpp.compiler.symbols.DefSymbols>
+    <ListValues>
+      <Value>NDEBUG</Value>
+      <Value>F_CPU=84000000L</Value>
+      <Value>ARDUINO=</Value>
+      <Value>ARDUINO_SAM_DUE</Value>
+      <Value>ARDUINO_ARCH_SAM</Value>
+      <Value>USB_VID=0x2341</Value>
+      <Value>USB_PID=0x003e</Value>
+      <Value>USB_PRODUCT="\"Arduino Due\""</Value>
+      <Value>USB_MANUFACTURER="\"Arduino LLC\""</Value>
+      <Value>USBCON</Value>
+    </ListValues>
+  </armgcccpp.compiler.symbols.DefSymbols>
+  <armgcccpp.compiler.directories.IncludePaths>
+    <ListValues>
+      <Value>%24(PackRepoDir)\arm\cmsis\5.0.1\CMSIS\Include\</Value>
+      <Value>%24(ProjectDir)\include</Value>
+      <Value>%24(ProjectDir)\include\core</Value>
+      <Value>%24(ProjectDir)\include\core\avr</Value>
+      <Value>%24(ProjectDir)\include\core\USB</Value>
+      <Value>%24(ProjectDir)\include\libraries\FreeRTOS_ARM</Value>
+      <Value>%24(ProjectDir)\include\libraries\ili9341_due</Value>
+      <Value>%24(ProjectDir)\include\libraries\SPI</Value>
+      <Value>%24(ProjectDir)\include\libraries\Vector</Value>
+      <Value>%24(ProjectDir)\include\libraries\FreeRTOS_ARM\utility</Value>
+      <Value>%24(ProjectDir)\include\libraries\ili9341_due\fonts</Value>
+      <Value>%24(ProjectDir)\include\libraries\Vector\Vector</Value>
+      <Value>../src/ASF/common/utils/interrupt</Value>
+      <Value>../src/ASF/common/utils</Value>
+      <Value>../src/ASF/sam/utils/cmsis/sam3x/source/templates/gcc</Value>
+      <Value>../src/ASF/sam/utils/cmsis/sam3x/source/templates</Value>
+      <Value>..\include\libraries\FreeRTOS_ARM\org_files</Value>
+      <Value>..\include\libraries\FreeRTOS_ARM\src</Value>
+      <Value>..\include\libraries\FreeRTOS_ARM\src\utility</Value>
+      <Value>..\include\libraries\SPI\src</Value>
+      <Value>..\include\libraries\Encoder</Value>
+      <Value>..\include\libraries\Encoder\utility</Value>
+      <Value>..\include\libraries\Adafruit_ADS1X15</Value>
+      <Value>..\include\libraries\Wire</Value>
+      <Value>..\include\libraries\Wire\src</Value>
+      <Value>..\include\libraries\DueFlashStorage\src</Value>
+    </ListValues>
+  </armgcccpp.compiler.directories.IncludePaths>
+  <armgcccpp.compiler.optimization.level>Optimize for size (-Os)</armgcccpp.compiler.optimization.level>
+  <armgcccpp.compiler.optimization.OtherFlags>-fno-threadsafe-statics -fno-exceptions</armgcccpp.compiler.optimization.OtherFlags>
+  <armgcccpp.compiler.optimization.PrepareFunctionsForGarbageCollection>True</armgcccpp.compiler.optimization.PrepareFunctionsForGarbageCollection>
+  <armgcccpp.compiler.optimization.PrepareDataForGarbageCollection>True</armgcccpp.compiler.optimization.PrepareDataForGarbageCollection>
+  <armgcccpp.compiler.optimization.EnableLongCalls>False</armgcccpp.compiler.optimization.EnableLongCalls>
+  <armgcccpp.compiler.optimization.DebugLevel>Maximum (-g3)</armgcccpp.compiler.optimization.DebugLevel>
+  <armgcccpp.compiler.warnings.InhibitAllWarnings>True</armgcccpp.compiler.warnings.InhibitAllWarnings>
+  <armgcccpp.compiler.miscellaneous.OtherFlags>-std=gnu++11 --param max-inline-insns-single=500 -nostdlib</armgcccpp.compiler.miscellaneous.OtherFlags>
+  <armgcccpp.linker.general.UseNewlibNano>True</armgcccpp.linker.general.UseNewlibNano>
+  <armgcccpp.linker.general.AdditionalSpecs>Use syscall stubs (--specs=nosys.specs)</armgcccpp.linker.general.AdditionalSpecs>
+  <armgcccpp.linker.libraries.Libraries>
+    <ListValues>
+      <Value>libm</Value>
+    </ListValues>
+  </armgcccpp.linker.libraries.Libraries>
+  <armgcccpp.linker.libraries.LibrarySearchPaths>
+    <ListValues>
+      <Value>..\linker_scripts\linker_scripts\gcc</Value>
+    </ListValues>
+  </armgcccpp.linker.libraries.LibrarySearchPaths>
+  <armgcccpp.linker.optimization.GarbageCollectUnusedSections>True</armgcccpp.linker.optimization.GarbageCollectUnusedSections>
+  <armgcccpp.linker.miscellaneous.LinkerFlags>-Tflash_without_bootloader.ld -Wl,--cref -Os -Wl,--check-sections -Wl,--unresolved-symbols=report-all -Wl,--warn-common -Wl,--warn-section-align</armgcccpp.linker.miscellaneous.LinkerFlags>
+  <armgcccpp.assembler.general.IncludePaths>
+    <ListValues>
+      <Value>%24(PackRepoDir)\arm\cmsis\5.0.1\CMSIS\Include\</Value>
+    </ListValues>
+  </armgcccpp.assembler.general.IncludePaths>
+  <armgcccpp.assembler.debugging.DebugLevel>Default (-Wa,-g)</armgcccpp.assembler.debugging.DebugLevel>
+  <armgcccpp.preprocessingassembler.general.IncludePaths>
+    <ListValues>
+      <Value>%24(PackRepoDir)\arm\cmsis\5.0.1\CMSIS\Include\</Value>
+    </ListValues>
+  </armgcccpp.preprocessingassembler.general.IncludePaths>
+</ArmGccCpp>
     </ToolchainSettings>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <ToolchainSettings>
       <ArmGccCpp>
-        <armgcc.common.outputfiles.hex>True</armgcc.common.outputfiles.hex>
-        <armgcc.common.outputfiles.lss>True</armgcc.common.outputfiles.lss>
-        <armgcc.common.outputfiles.eep>True</armgcc.common.outputfiles.eep>
-        <armgcc.common.outputfiles.bin>True</armgcc.common.outputfiles.bin>
-        <armgcc.common.outputfiles.srec>True</armgcc.common.outputfiles.srec>
-        <armgcc.compiler.symbols.DefSymbols>
-          <ListValues>
-            <Value>DEBUG</Value>
-            <Value>F_CPU=84000000L</Value>
-            <Value>ARDUINO=10805</Value>
-            <Value>ARDUINO_SAM_DUE</Value>
-            <Value>ARDUINO_ARCH_SAM</Value>
-            <Value>USB_VID=0x2341</Value>
-            <Value>USB_PID=0x003e</Value>
-            <Value>USB_PRODUCT="\"Arduino Due\""</Value>
-            <Value>USB_MANUFACTURER="\"Arduino LLC\""</Value>
-            <Value>USBCON</Value>
-            <Value>__SAM3X8E__</Value>
-          </ListValues>
-        </armgcc.compiler.symbols.DefSymbols>
-        <armgcc.compiler.directories.IncludePaths>
-          <ListValues>
-            <Value>%24(PackRepoDir)\arm\cmsis\5.0.1\CMSIS\Include\</Value>
-            <Value>..\include\libraries\FreeRTOS_ARM\org_files</Value>
-            <Value>..\include\libraries\FreeRTOS_ARM\src</Value>
-            <Value>..\include\libraries\FreeRTOS_ARM\src\utility</Value>
-            <Value>..\include\libraries\SPI\src</Value>
-            <Value>../include/libraries/Vector</Value>
-            <Value>../include/libraries/Vector/Vector</Value>
-            <Value>../include/libraries/ili9341_due</Value>
-            <Value>../include/libraries/ili9341_due/fonts</Value>
-            <Value>../include/libraries/SPI</Value>
-            <Value>../include/libraries/SPI/src</Value>
-            <Value>../include/libraries/Vector</Value>
-            <Value>../include/libraries/Vector/Vector</Value>
-            <Value>../include/avr</Value>
-            <Value>../include/include</Value>
-            <Value>../include</Value>
-            <Value>../include/sam3xa</Value>
-            <Value>../include/sam3xa/include</Value>
-            <Value>../include/sam3xa/include/component</Value>
-            <Value>../include/sam3xa/include/instance</Value>
-            <Value>../include/sam3xa/include/pio</Value>
-            <Value>../include/USB</Value>
-            <Value>../src/libraries/FreeRTOS_ARM/src</Value>
-            <Value>../src/libraries/FreeRTOS_ARM/src/utility</Value>
-            <Value>../src/libraries/SPI/src</Value>
-            <Value>../src/USB</Value>
-            <Value>../src/avr</Value>
-            <Value>../linker_scripts/linker_scripts/gcc</Value>
-            <Value>..\include\libraries\Encoder</Value>
-            <Value>..\include\libraries\Encoder\utility</Value>
-            <Value>..\include\libraries\Adafruit_ADS1X15</Value>
-            <Value>..\include\libraries\Wire</Value>
-            <Value>..\include\libraries\Wire\src</Value>
-            <Value>..\include\libraries\DueFlashStorage\src</Value>
-          </ListValues>
-        </armgcc.compiler.directories.IncludePaths>
-        <armgcc.compiler.optimization.level>Optimize most (-O3)</armgcc.compiler.optimization.level>
-        <armgcc.compiler.optimization.OtherFlags>-fno-threadsafe-statics -fno-exceptions</armgcc.compiler.optimization.OtherFlags>
-        <armgcc.compiler.optimization.PrepareFunctionsForGarbageCollection>True</armgcc.compiler.optimization.PrepareFunctionsForGarbageCollection>
-        <armgcc.compiler.optimization.PrepareDataForGarbageCollection>True</armgcc.compiler.optimization.PrepareDataForGarbageCollection>
-        <armgcc.compiler.optimization.EnableLongCalls>False</armgcc.compiler.optimization.EnableLongCalls>
-        <armgcc.compiler.optimization.DebugLevel>Maximum (-g3)</armgcc.compiler.optimization.DebugLevel>
-        <armgcc.compiler.warnings.InhibitAllWarnings>True</armgcc.compiler.warnings.InhibitAllWarnings>
-        <armgcc.compiler.miscellaneous.OtherFlags>-std=gnu11 --param max-inline-insns-single=500 -nostdlib</armgcc.compiler.miscellaneous.OtherFlags>
-        <armgcccpp.compiler.symbols.DefSymbols>
-          <ListValues>
-            <Value>DEBUG</Value>
-            <Value>F_CPU=84000000L</Value>
-            <Value>ARDUINO=10805</Value>
-            <Value>ARDUINO_SAM_DUE</Value>
-            <Value>ARDUINO_ARCH_SAM</Value>
-            <Value>USB_VID=0x2341</Value>
-            <Value>USB_PID=0x003e</Value>
-            <Value>USB_PRODUCT="\"Arduino Due\""</Value>
-            <Value>USB_MANUFACTURER="\"Arduino LLC\""</Value>
-            <Value>USBCON</Value>
-            <Value>__SAM3X8E__</Value>
-          </ListValues>
-        </armgcccpp.compiler.symbols.DefSymbols>
-        <armgcccpp.compiler.directories.IncludePaths>
-          <ListValues>
-            <Value>%24(PackRepoDir)\arm\cmsis\5.0.1\CMSIS\Include\</Value>
-            <Value>..\include\libraries\FreeRTOS_ARM\org_files</Value>
-            <Value>..\include\libraries\FreeRTOS_ARM\src</Value>
-            <Value>..\include\libraries\FreeRTOS_ARM\src\utility</Value>
-            <Value>..\include\libraries\SPI\src</Value>
-            <Value>../include/libraries/Vector</Value>
-            <Value>../include/libraries/Vector/Vector</Value>
-            <Value>../include/libraries/ili9341_due</Value>
-            <Value>../include/libraries/ili9341_due/fonts</Value>
-            <Value>../include/libraries/SPI</Value>
-            <Value>../include/libraries/SPI/src</Value>
-            <Value>../include/libraries/Vector</Value>
-            <Value>../include/libraries/Vector/Vector</Value>
-            <Value>../include/avr</Value>
-            <Value>../include/include</Value>
-            <Value>../include</Value>
-            <Value>../include/sam3xa</Value>
-            <Value>../include/sam3xa/include</Value>
-            <Value>../include/sam3xa/include/component</Value>
-            <Value>../include/sam3xa/include/instance</Value>
-            <Value>../include/sam3xa/include/pio</Value>
-            <Value>../include/USB</Value>
-            <Value>../src/libraries/FreeRTOS_ARM/src</Value>
-            <Value>../src/libraries/FreeRTOS_ARM/src/utility</Value>
-            <Value>../src/libraries/SPI/src</Value>
-            <Value>../src/USB</Value>
-            <Value>../src/avr</Value>
-            <Value>../linker_scripts/linker_scripts/gcc</Value>
-            <Value>..\include\libraries\Encoder</Value>
-            <Value>..\include\libraries\Encoder\utility</Value>
-            <Value>..\include\libraries\Adafruit_ADS1X15</Value>
-            <Value>..\include\libraries\Wire</Value>
-            <Value>..\include\libraries\Wire\src</Value>
-            <Value>..\include\libraries\DueFlashStorage\src</Value>
-          </ListValues>
-        </armgcccpp.compiler.directories.IncludePaths>
-        <armgcccpp.compiler.optimization.OtherFlags>-fno-threadsafe-statics -fno-exceptions</armgcccpp.compiler.optimization.OtherFlags>
-        <armgcccpp.compiler.optimization.PrepareFunctionsForGarbageCollection>True</armgcccpp.compiler.optimization.PrepareFunctionsForGarbageCollection>
-        <armgcccpp.compiler.optimization.PrepareDataForGarbageCollection>True</armgcccpp.compiler.optimization.PrepareDataForGarbageCollection>
-        <armgcccpp.compiler.optimization.EnableLongCalls>False</armgcccpp.compiler.optimization.EnableLongCalls>
-        <armgcccpp.compiler.optimization.DebugLevel>Maximum (-g3)</armgcccpp.compiler.optimization.DebugLevel>
-        <armgcccpp.compiler.warnings.InhibitAllWarnings>True</armgcccpp.compiler.warnings.InhibitAllWarnings>
-        <armgcccpp.compiler.miscellaneous.OtherFlags>-std=gnu++11 --param max-inline-insns-single=500 -nostdlib</armgcccpp.compiler.miscellaneous.OtherFlags>
-        <armgcccpp.linker.general.AdditionalSpecs>Use syscall stubs (--specs=nosys.specs)</armgcccpp.linker.general.AdditionalSpecs>
-        <armgcccpp.linker.libraries.Libraries>
-          <ListValues>
-            <Value>libm</Value>
-          </ListValues>
-        </armgcccpp.linker.libraries.Libraries>
-        <armgcccpp.linker.libraries.LibrarySearchPaths>
-          <ListValues>
-            <Value>..\linker_scripts\linker_scripts\gcc</Value>
-          </ListValues>
-        </armgcccpp.linker.libraries.LibrarySearchPaths>
-        <armgcccpp.linker.optimization.GarbageCollectUnusedSections>True</armgcccpp.linker.optimization.GarbageCollectUnusedSections>
-        <armgcccpp.linker.memorysettings.ExternalRAM />
-        <armgcccpp.linker.miscellaneous.LinkerFlags>-Tsam3x8e_flash.ld -Wl,--cref -Os -Wl,--check-sections -Wl,--unresolved-symbols=report-all -Wl,--warn-common -Wl,--warn-section-align</armgcccpp.linker.miscellaneous.LinkerFlags>
-        <armgcccpp.assembler.general.IncludePaths>
-          <ListValues>
-            <Value>%24(PackRepoDir)\arm\cmsis\5.0.1\CMSIS\Include\</Value>
-          </ListValues>
-        </armgcccpp.assembler.general.IncludePaths>
-        <armgcccpp.assembler.debugging.DebugLevel>Default (-g)</armgcccpp.assembler.debugging.DebugLevel>
-        <armgcccpp.preprocessingassembler.general.IncludePaths>
-          <ListValues>
-            <Value>%24(PackRepoDir)\arm\cmsis\5.0.1\CMSIS\Include\</Value>
-          </ListValues>
-        </armgcccpp.preprocessingassembler.general.IncludePaths>
-        <armgcccpp.preprocessingassembler.debugging.DebugLevel>Default (-Wa,-g)</armgcccpp.preprocessingassembler.debugging.DebugLevel>
-      </ArmGccCpp>
+  <armgcc.common.outputfiles.hex>True</armgcc.common.outputfiles.hex>
+  <armgcc.common.outputfiles.lss>True</armgcc.common.outputfiles.lss>
+  <armgcc.common.outputfiles.eep>True</armgcc.common.outputfiles.eep>
+  <armgcc.common.outputfiles.bin>True</armgcc.common.outputfiles.bin>
+  <armgcc.common.outputfiles.srec>True</armgcc.common.outputfiles.srec>
+  <armgcc.compiler.symbols.DefSymbols>
+    <ListValues>
+      <Value>DEBUG</Value>
+      <Value>F_CPU=84000000L</Value>
+      <Value>ARDUINO=10805</Value>
+      <Value>ARDUINO_SAM_DUE</Value>
+      <Value>ARDUINO_ARCH_SAM</Value>
+      <Value>USB_VID=0x2341</Value>
+      <Value>USB_PID=0x003e</Value>
+      <Value>USB_PRODUCT="\"Arduino Due\""</Value>
+      <Value>USB_MANUFACTURER="\"Arduino LLC\""</Value>
+      <Value>USBCON</Value>
+      <Value>__SAM3X8E__</Value>
+    </ListValues>
+  </armgcc.compiler.symbols.DefSymbols>
+  <armgcc.compiler.directories.IncludePaths>
+    <ListValues>
+      <Value>%24(PackRepoDir)\arm\cmsis\5.0.1\CMSIS\Include\</Value>
+      <Value>..\include\libraries\FreeRTOS_ARM\org_files</Value>
+      <Value>..\include\libraries\FreeRTOS_ARM\src</Value>
+      <Value>..\include\libraries\FreeRTOS_ARM\src\utility</Value>
+      <Value>..\include\libraries\SPI\src</Value>
+      <Value>../include/libraries/Vector</Value>
+      <Value>../include/libraries/Vector/Vector</Value>
+      <Value>../include/libraries/ili9341_due</Value>
+      <Value>../include/libraries/ili9341_due/fonts</Value>
+      <Value>../include/libraries/SPI</Value>
+      <Value>../include/libraries/SPI/src</Value>
+      <Value>../include/libraries/Vector</Value>
+      <Value>../include/libraries/Vector/Vector</Value>
+      <Value>../include/avr</Value>
+      <Value>../include/include</Value>
+      <Value>../include</Value>
+      <Value>../include/sam3xa</Value>
+      <Value>../include/sam3xa/include</Value>
+      <Value>../include/sam3xa/include/component</Value>
+      <Value>../include/sam3xa/include/instance</Value>
+      <Value>../include/sam3xa/include/pio</Value>
+      <Value>../include/USB</Value>
+      <Value>../src/libraries/FreeRTOS_ARM/src</Value>
+      <Value>../src/libraries/FreeRTOS_ARM/src/utility</Value>
+      <Value>../src/libraries/SPI/src</Value>
+      <Value>../src/USB</Value>
+      <Value>../src/avr</Value>
+      <Value>../linker_scripts/linker_scripts/gcc</Value>
+      <Value>..\include\libraries\Encoder</Value>
+      <Value>..\include\libraries\Encoder\utility</Value>
+      <Value>..\include\libraries\Adafruit_ADS1X15</Value>
+      <Value>..\include\libraries\Wire</Value>
+      <Value>..\include\libraries\Wire\src</Value>
+      <Value>..\include\libraries\DueFlashStorage\src</Value>
+    </ListValues>
+  </armgcc.compiler.directories.IncludePaths>
+  <armgcc.compiler.optimization.level>Optimize more (-O2)</armgcc.compiler.optimization.level>
+  <armgcc.compiler.optimization.OtherFlags>-fno-threadsafe-statics -fno-exceptions</armgcc.compiler.optimization.OtherFlags>
+  <armgcc.compiler.optimization.PrepareFunctionsForGarbageCollection>True</armgcc.compiler.optimization.PrepareFunctionsForGarbageCollection>
+  <armgcc.compiler.optimization.PrepareDataForGarbageCollection>True</armgcc.compiler.optimization.PrepareDataForGarbageCollection>
+  <armgcc.compiler.optimization.EnableLongCalls>False</armgcc.compiler.optimization.EnableLongCalls>
+  <armgcc.compiler.optimization.DebugLevel>Maximum (-g3)</armgcc.compiler.optimization.DebugLevel>
+  <armgcc.compiler.warnings.InhibitAllWarnings>True</armgcc.compiler.warnings.InhibitAllWarnings>
+  <armgcc.compiler.miscellaneous.OtherFlags>-std=gnu11 --param max-inline-insns-single=500 -nostdlib</armgcc.compiler.miscellaneous.OtherFlags>
+  <armgcccpp.compiler.symbols.DefSymbols>
+    <ListValues>
+      <Value>DEBUG</Value>
+      <Value>F_CPU=84000000L</Value>
+      <Value>ARDUINO=10805</Value>
+      <Value>ARDUINO_SAM_DUE</Value>
+      <Value>ARDUINO_ARCH_SAM</Value>
+      <Value>USB_VID=0x2341</Value>
+      <Value>USB_PID=0x003e</Value>
+      <Value>USB_PRODUCT="\"Arduino Due\""</Value>
+      <Value>USB_MANUFACTURER="\"Arduino LLC\""</Value>
+      <Value>USBCON</Value>
+      <Value>__SAM3X8E__</Value>
+    </ListValues>
+  </armgcccpp.compiler.symbols.DefSymbols>
+  <armgcccpp.compiler.directories.IncludePaths>
+    <ListValues>
+      <Value>%24(PackRepoDir)\arm\cmsis\5.0.1\CMSIS\Include\</Value>
+      <Value>..\include\libraries\FreeRTOS_ARM\org_files</Value>
+      <Value>..\include\libraries\FreeRTOS_ARM\src</Value>
+      <Value>..\include\libraries\FreeRTOS_ARM\src\utility</Value>
+      <Value>..\include\libraries\SPI\src</Value>
+      <Value>../include/libraries/Vector</Value>
+      <Value>../include/libraries/Vector/Vector</Value>
+      <Value>../include/libraries/ili9341_due</Value>
+      <Value>../include/libraries/ili9341_due/fonts</Value>
+      <Value>../include/libraries/SPI</Value>
+      <Value>../include/libraries/SPI/src</Value>
+      <Value>../include/libraries/Vector</Value>
+      <Value>../include/libraries/Vector/Vector</Value>
+      <Value>../include/avr</Value>
+      <Value>../include/include</Value>
+      <Value>../include</Value>
+      <Value>../include/sam3xa</Value>
+      <Value>../include/sam3xa/include</Value>
+      <Value>../include/sam3xa/include/component</Value>
+      <Value>../include/sam3xa/include/instance</Value>
+      <Value>../include/sam3xa/include/pio</Value>
+      <Value>../include/USB</Value>
+      <Value>../src/libraries/FreeRTOS_ARM/src</Value>
+      <Value>../src/libraries/FreeRTOS_ARM/src/utility</Value>
+      <Value>../src/libraries/SPI/src</Value>
+      <Value>../src/USB</Value>
+      <Value>../src/avr</Value>
+      <Value>../linker_scripts/linker_scripts/gcc</Value>
+      <Value>..\include\libraries\Encoder</Value>
+      <Value>..\include\libraries\Encoder\utility</Value>
+      <Value>..\include\libraries\Adafruit_ADS1X15</Value>
+      <Value>..\include\libraries\Wire</Value>
+      <Value>..\include\libraries\Wire\src</Value>
+      <Value>..\include\libraries\DueFlashStorage\src</Value>
+    </ListValues>
+  </armgcccpp.compiler.directories.IncludePaths>
+  <armgcccpp.compiler.optimization.level>Optimize more (-O2)</armgcccpp.compiler.optimization.level>
+  <armgcccpp.compiler.optimization.OtherFlags>-fno-threadsafe-statics -fno-exceptions</armgcccpp.compiler.optimization.OtherFlags>
+  <armgcccpp.compiler.optimization.PrepareFunctionsForGarbageCollection>True</armgcccpp.compiler.optimization.PrepareFunctionsForGarbageCollection>
+  <armgcccpp.compiler.optimization.PrepareDataForGarbageCollection>True</armgcccpp.compiler.optimization.PrepareDataForGarbageCollection>
+  <armgcccpp.compiler.optimization.EnableLongCalls>False</armgcccpp.compiler.optimization.EnableLongCalls>
+  <armgcccpp.compiler.optimization.DebugLevel>Maximum (-g3)</armgcccpp.compiler.optimization.DebugLevel>
+  <armgcccpp.compiler.warnings.InhibitAllWarnings>True</armgcccpp.compiler.warnings.InhibitAllWarnings>
+  <armgcccpp.compiler.miscellaneous.OtherFlags>-std=gnu++11 --param max-inline-insns-single=500 -nostdlib</armgcccpp.compiler.miscellaneous.OtherFlags>
+  <armgcccpp.linker.general.AdditionalSpecs>Use syscall stubs (--specs=nosys.specs)</armgcccpp.linker.general.AdditionalSpecs>
+  <armgcccpp.linker.libraries.Libraries>
+    <ListValues>
+      <Value>libm</Value>
+    </ListValues>
+  </armgcccpp.linker.libraries.Libraries>
+  <armgcccpp.linker.libraries.LibrarySearchPaths>
+    <ListValues>
+      <Value>..\linker_scripts\linker_scripts\gcc</Value>
+    </ListValues>
+  </armgcccpp.linker.libraries.LibrarySearchPaths>
+  <armgcccpp.linker.optimization.GarbageCollectUnusedSections>True</armgcccpp.linker.optimization.GarbageCollectUnusedSections>
+  <armgcccpp.linker.optimization.EnableFastMath>True</armgcccpp.linker.optimization.EnableFastMath>
+  <armgcccpp.linker.memorysettings.ExternalRAM />
+  <armgcccpp.linker.miscellaneous.LinkerFlags>-Tsam3x8e_flash.ld -Wl,--cref -Os -Wl,--check-sections -Wl,--unresolved-symbols=report-all -Wl,--warn-common -Wl,--warn-section-align</armgcccpp.linker.miscellaneous.LinkerFlags>
+  <armgcccpp.assembler.general.IncludePaths>
+    <ListValues>
+      <Value>%24(PackRepoDir)\arm\cmsis\5.0.1\CMSIS\Include\</Value>
+    </ListValues>
+  </armgcccpp.assembler.general.IncludePaths>
+  <armgcccpp.assembler.debugging.DebugLevel>Default (-g)</armgcccpp.assembler.debugging.DebugLevel>
+  <armgcccpp.preprocessingassembler.general.IncludePaths>
+    <ListValues>
+      <Value>%24(PackRepoDir)\arm\cmsis\5.0.1\CMSIS\Include\</Value>
+    </ListValues>
+  </armgcccpp.preprocessingassembler.general.IncludePaths>
+  <armgcccpp.preprocessingassembler.debugging.DebugLevel>Default (-Wa,-g)</armgcccpp.preprocessingassembler.debugging.DebugLevel>
+</ArmGccCpp>
     </ToolchainSettings>
   </PropertyGroup>
   <ItemGroup>
@@ -544,108 +546,6 @@
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="include\libraries\Encoder\utility\interrupt_pins.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="include\libraries\FreeRTOS_ARM\src\basic_io_arm.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="include\libraries\FreeRTOS_ARM\src\FreeRTOS_ARM.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="include\libraries\FreeRTOS_ARM\src\utility\croutine.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="include\libraries\FreeRTOS_ARM\src\utility\deprecated_definitions.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="include\libraries\FreeRTOS_ARM\src\utility\event_groups.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="include\libraries\FreeRTOS_ARM\src\utility\FreeRTOS.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="include\libraries\FreeRTOS_ARM\src\utility\FreeRTOSConfig.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="include\libraries\FreeRTOS_ARM\src\utility\list.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="include\libraries\FreeRTOS_ARM\src\utility\mpu_wrappers.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="include\libraries\FreeRTOS_ARM\src\utility\portable.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="include\libraries\FreeRTOS_ARM\src\utility\portmacro.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="include\libraries\FreeRTOS_ARM\src\utility\projdefs.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="include\libraries\FreeRTOS_ARM\src\utility\queue.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="include\libraries\FreeRTOS_ARM\src\utility\semphr.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="include\libraries\FreeRTOS_ARM\src\utility\StackMacros.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="include\libraries\FreeRTOS_ARM\src\utility\task.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="include\libraries\FreeRTOS_ARM\src\utility\timers.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="include\libraries\ili9341_due\fonts\allFonts.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="include\libraries\ili9341_due\fonts\Arial14.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="include\libraries\ili9341_due\fonts\Arial_bold_14.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="include\libraries\ili9341_due\fonts\Corsiva_12.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="include\libraries\ili9341_due\fonts\fixednums15x31.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="include\libraries\ili9341_due\fonts\fixednums7x15.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="include\libraries\ili9341_due\fonts\fixednums8x16.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="include\libraries\ili9341_due\fonts\helvNeueTh70.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="include\libraries\ili9341_due\fonts\jokerman_255.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="include\libraries\ili9341_due\fonts\roboto16.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="include\libraries\ili9341_due\fonts\roboto32.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="include\libraries\ili9341_due\fonts\roboto70nums.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="include\libraries\ili9341_due\fonts\SystemFont5x7.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="include\libraries\ili9341_due\fonts\Verdana_digits_24.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="include\libraries\ili9341_due\ILI9341_due.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="include\libraries\ili9341_due\ILI9341_due_config.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="include\libraries\ili9341_due\SystemFont5x7.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="include\libraries\SPI\src\SPI.h">
@@ -981,6 +881,12 @@
     <Compile Include="NVM_Operations.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="Pulling.cpp">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="Pulling.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="SAM3Timer.cpp">
       <SubType>compile</SubType>
     </Compile>
@@ -1134,42 +1040,6 @@
     <Compile Include="src\libraries\Encoder\Encoder.cpp">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="src\libraries\FreeRTOS_ARM\src\assertMsg.cpp">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\libraries\FreeRTOS_ARM\src\basic_io_arm.cpp">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\libraries\FreeRTOS_ARM\src\FreeRTOS_ARM.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\libraries\FreeRTOS_ARM\src\utility\croutine.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\libraries\FreeRTOS_ARM\src\utility\event_groups.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\libraries\FreeRTOS_ARM\src\utility\heap_3.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\libraries\FreeRTOS_ARM\src\utility\list.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\libraries\FreeRTOS_ARM\src\utility\port.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\libraries\FreeRTOS_ARM\src\utility\queue.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\libraries\FreeRTOS_ARM\src\utility\tasks.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\libraries\FreeRTOS_ARM\src\utility\timers.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\libraries\ili9341_due\ILI9341_due.cpp">
-      <SubType>compile</SubType>
-    </Compile>
     <Compile Include="src\libraries\SPI\src\SPI.cpp">
       <SubType>compile</SubType>
     </Compile>
@@ -1264,11 +1134,6 @@
     <Folder Include="include\libraries\DueFlashStorage\src\" />
     <Folder Include="include\libraries\Encoder\" />
     <Folder Include="include\libraries\Encoder\utility\" />
-    <Folder Include="include\libraries\FreeRTOS_ARM\" />
-    <Folder Include="include\libraries\FreeRTOS_ARM\src\" />
-    <Folder Include="include\libraries\FreeRTOS_ARM\src\utility\" />
-    <Folder Include="include\libraries\ili9341_due" />
-    <Folder Include="include\libraries\ili9341_due\fonts" />
     <Folder Include="include\libraries\Vector" />
     <Folder Include="include\libraries\SPI\" />
     <Folder Include="include\libraries\SPI\src\" />
@@ -1290,10 +1155,6 @@
     <Folder Include="src\libraries\DueFlashStorage\" />
     <Folder Include="src\libraries\DueFlashStorage\src\" />
     <Folder Include="src\libraries\Encoder\" />
-    <Folder Include="src\libraries\FreeRTOS_ARM\" />
-    <Folder Include="src\libraries\FreeRTOS_ARM\src\" />
-    <Folder Include="src\libraries\FreeRTOS_ARM\src\utility\" />
-    <Folder Include="src\libraries\ili9341_due" />
     <Folder Include="src\libraries\SPI\" />
     <Folder Include="src\libraries\SPI\src\" />
     <Folder Include="src\include" />

@@ -191,17 +191,17 @@ void Serial_::accept(void)
 	// current location of the tail), we're about to overflow the buffer
 	// and so we don't write the character or advance the head.
 	while (i != buffer->tail) {
+		uint32_t c;
 		if (!USBD_Available(CDC_RX)) {
 			udd_ack_fifocon(CDC_RX);
 			break;
 		}
-		uint8_t c[CDC_SERIAL_BUFFER_SIZE];
-		uint32_t k = USBD_Recv(CDC_RX, &c, (buffer->tail - i) % CDC_SERIAL_BUFFER_SIZE);
-		uint32_t j;
-		for (j=0;j<k;j++) buffer->buffer[(buffer->head + j) % CDC_SERIAL_BUFFER_SIZE] = c[j];
+		c = USBD_Recv(CDC_RX);
+		// c = UDD_Recv8(CDC_RX & 0xF);
+		buffer->buffer[buffer->head] = c;
+		buffer->head = i;
 
-		buffer->head = (buffer->head + k) % CDC_SERIAL_BUFFER_SIZE;
-		i = (i + k) % CDC_SERIAL_BUFFER_SIZE;
+		i = (i + 1) % CDC_SERIAL_BUFFER_SIZE;
 	}
 
 	// release the guard
@@ -212,6 +212,13 @@ int Serial_::available(void)
 {
 	ring_buffer *buffer = &cdc_rx_buffer;
 	return (unsigned int)(CDC_SERIAL_BUFFER_SIZE + buffer->head - buffer->tail) % CDC_SERIAL_BUFFER_SIZE;
+}
+
+int Serial_::availableForWrite(void)
+{
+	// return the number of bytes left in the current bank,
+	// always EP size - 1, because bank is flushed on every write
+	return (EPX_SIZE - 1);
 }
 
 int Serial_::peek(void)

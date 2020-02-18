@@ -8,10 +8,9 @@
 #include "SerialPortExpander.h"
 #include "SerialNative.h"
 #include "NVM_Operations.h"
-#include "FreeRTOS_ARM.h"
 #include "Vector.h"
 #include "SAM3Timer.h"
-
+#include "Pulling.h"
 
 template<size_t SIZE, class T> inline size_t array_size(T (&arr)[SIZE]);
 
@@ -202,12 +201,7 @@ unsigned int SerialProcessing::CheckSerial(DmaSerial *port, int portNumber) //ch
 		
 		port->get(cData, MAX_CMD_LENGTH);
 
-		//while(port->available() > 0)
-		//{
-		//computerdata[i++] = port->get();
-		//if (i > MAX_CMD_LENGTH){break;}
-		//i++;
-		//}
+		
 		
 		
 	}
@@ -325,20 +319,7 @@ unsigned int SerialProcessing::ProcessDataFromPC(SerialCommand *sCommand)
 	if (strcmp(sCommand->command, "velocity") == 0)
 	{
 		float rpm = atof(sCommand->value);
-		if (rpm > 300.0)
-		{
-			rpm = 300.0;
-			sCommand->value = "300.0";
-		}
-		if (rpm < 0.0)
-		{
-			rpm = 0.0;
-			sCommand->value = "0.0";
-		}
-		
-		int32_t freq = (((rpm * (16.0 * 200.0) ) / 60.0) * 1.851) * 2.0;
-		SAM3Timer::changeTimerFrequency(TC1, 0, TC3_IRQn, freq);
-		
+		Pulling::SetWheelRPM(rpm);
 	}
 
 	
@@ -357,10 +338,9 @@ unsigned int SerialProcessing::SendDataToDevice(SerialCommand *sCommand)
 
 	if((sCommand->hardwareType > hardwareType.indicator) && (sCommand->hardwareType < hardwareType.screen))
 	{
-		//serialPortExpander.channel
 		_serialPortExpander.ProcessSerialExpander(sCommand);
-		//delay(20);
-		vTaskDelay(20);
+		//delayMicroseconds(20000);
+		delay(20);
 	}
 	if (sCommand->hardwareType == hardwareType.internal)
 	{
@@ -371,14 +351,14 @@ unsigned int SerialProcessing::SendDataToDevice(SerialCommand *sCommand)
 
 unsigned int SerialProcessing::SendToPC(SerialCommand *sCommand)
 {
-	if (strcmp(sCommand->command, "FilamentLength") == 0)
-	{
-		if (sCommand->value != "" || sCommand->value != NULL)
-		{
-			FILAMENTLENGTH = atof(sCommand->value);
-		}
-		
-	}
+	//if (strcmp(sCommand->command, "FilamentLength") == 0)
+	//{
+		//if (sCommand->value != "" || sCommand->value != NULL)
+		//{
+			//FILAMENTLENGTH = atof(sCommand->value);
+		//}
+		//
+	//}
 
 	char serialOutputBuffer[MAX_CMD_LENGTH] = {0};
 	BuildSerialOutput(sCommand, serialOutputBuffer);
@@ -420,7 +400,6 @@ void SerialProcessing::CheckInteralCommands(SerialCommand *sCommand)
 	{
 		nvm_operations.SetLowerLimit(atof(sCommand->value), true);
 	}
-	
 	if ( strcmp(sCommand->command, "SpecificGravity") == 0)
 	{
 		nvm_operations.SetSpecificGravity(atof(sCommand->value), true);
@@ -440,14 +419,16 @@ void SerialProcessing::CheckInteralCommands(SerialCommand *sCommand)
 	if (strcmp(sCommand->command, "Handshake") == 0)
 	{
 		HANDSHAKE = true;
+		KEEPALIVETIMER = 0;
 	}
 	if (strcmp(sCommand->command, "IsInSimulationMode") == 0)
 	{
 		SIMULATIONACTIVE = strcmp(sCommand->value, "true") == 0;
 	}
-
-	
-	
+	if (strcmp(sCommand->command, "KeepAlive") == 0)
+	{
+		KEEPALIVETIMER = 0;
+	}
 
 }
 
